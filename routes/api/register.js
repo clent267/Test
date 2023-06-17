@@ -65,13 +65,13 @@ async function registerapi(req, res) {
         data: {
           username,
           password: hashedPassword,
-          membership: "Custumer",
+          membership: 'Customer',
           email,
           discord_id,
           stats,
           blacklistinfo: {
             status: false,
-            reason: "",
+            reason: 'None',
           },
           profile_pic,
         },
