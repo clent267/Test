@@ -201,8 +201,8 @@ router.post('/api/load_combo/deletecookies', async (req, res) => {
 //Load Accounts Combo
 
 router.get('/api/load_combo/loadaccounts', async (req, res) => {
-    const loadcookiesapi = require('./routes/api/load_combo/accounts/loadcookies.js');
-    loadcookiesapi(req, res);
+    const loadaccountsapi = require('./routes/api/load_combo/accounts/loadaccounts.js');
+    loadaccountsapi(req, res);
 });
 
 router.get('/api/load_combo/downloadaccounts', async (req, res) => {
