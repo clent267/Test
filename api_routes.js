@@ -4,10 +4,9 @@ const faunadb = require('faunadb');
 
 const router = express.Router();
 
-const multer = require('multer');
 const upload = multer({
-    dest: 'uploads/'
-}); // Set the destination folder for uploaded files
+    dest: '/tmp/uploads/'
+});
 
 const client = new faunadb.Client({
     secret: process.env.FAUNADB_SECRET,
