@@ -3,7 +3,7 @@ const express = require('express');
 const faunadb = require('faunadb');
 
 const router = express.Router();
-
+const multer = require('multer');
 const upload = multer({
     dest: '/tmp/uploads/'
 });
