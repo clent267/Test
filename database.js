@@ -25,12 +25,12 @@ async function createCollection(collection) {
 }
 
 async function createCollections() {
-  const collections = ['users', 'users_games', 'tokens', 'rbx_accounts', 'rbx_cookies', 'password_reset_tokens','sessions'];
+  const collections = ['users', 'users_games', 'tokens', 'rbx_accounts', 'rbx_cookies', 'password_reset_tokens', 'sessions'];
 
   for (const collection of collections) {
     try {
       const collectionExists = await client.query(q.Exists(q.Collection(collection)));
-      
+
       if (collectionExists) {
       } else {
         await client.query(q.CreateCollection({ name: collection }));
@@ -55,6 +55,10 @@ async function createIndex(indexName, collection, terms) {
         name: indexName,
         source: q.Collection(collection),
         terms,
+        values: [{ field: ['ref'] }],
+        serialized: true,
+        unique: true,
+        casefold: true,
       })
     );
     console.log(`Index '${indexName}' created`);
@@ -127,4 +131,4 @@ async function createIndexes() {
   }
 }
 
-module.exports = { createCollections, createIndexes};
+module.exports = { createCollections, createIndexes };

@@ -32,29 +32,37 @@ async function registerapi(req, res) {
   }
 
   try {
+    
     // Check if username is already taken
-    const usernameTaken = await client.query(q.Exists(q.Match(q.Index('users_by_username'), username)));
-
+    const usernameTaken = await client.query(
+      q.Exists(q.Match(q.Index('users_by_username'), username))
+    );
+    
     if (usernameTaken) {
       return res.status(409).json({ message: 'Username already taken' });
     }
-
-    const emailTaken = await client.query(q.Exists(q.Match(q.Index('users_by_email'), email)));
-
+    
+    const emailTaken = await client.query(
+      q.Exists(q.Match(q.Index('users_by_email'), email))
+    );
+    
     if (emailTaken) {
       return res.status(409).json({ message: 'Email already taken' });
     }
-
+    
     let tokenCheck;
     try {
-      tokenCheck = await client.query(q.Get(q.Match(q.Index('tokens_by_token'), token)));
+      tokenCheck = await client.query(
+        q.Get(q.Match(q.Index('tokens_by_token'), token))
+      );
     } catch (error) {
       return res.status(404).json({ message: 'Token not found' });
     }
-
+    
     if (tokenCheck.data.is_used) {
       return res.status(409).json({ message: 'Token already used' });
     }
+    
 
     // Generate a hashed password
     const hashedPassword = await bcrypt.hash(password, 10);
