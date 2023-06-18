@@ -52,7 +52,7 @@ async function updatemembershipapi(req, res) {
       return res.status(403).json({ message: 'Moderation cannot update the membership.' });
     }
 
-    const usertoupdate = await client.query(q.Get(q.Match(q.Index('users_by_username'), username)));
+    const usertoupdate = await client.query(q.Get(q.Match(q.Index('users_by_username'), q.Casefold(username))));
 
     if (membershipType === 'Blacklist') {
       // Update the user's membership and blacklistinfo
