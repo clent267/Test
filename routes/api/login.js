@@ -61,8 +61,6 @@ async function loginapi(req, res) {
 
     res.status(200).json({ message: 'Logged in successfully' });
   } catch (error) {
-    console.log(error);
-
     if (error.message === 'instance not found') {
       res.status(404).json({ message: 'User not found' });
     } else {

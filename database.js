@@ -58,7 +58,6 @@ async function createIndex(indexName, collection, terms) {
         values: [{ field: ['ref'] }],
         serialized: true,
         unique: true,
-        casefold: true,
       })
     );
     console.log(`Index '${indexName}' created`);
@@ -72,7 +71,7 @@ async function createIndexes() {
     {
       name: 'users_by_username',
       collection: 'users',
-      terms: [{ field: ['data', 'username'] }],
+      terms: [{ field: ['data', 'username'], casefold: true }],
     },
     {
       name: 'users_by_email',
