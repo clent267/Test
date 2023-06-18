@@ -29,11 +29,10 @@ async function loginapi(req, res) {
 
   try {
     // Retrieve the user with the given username
-    
     const user = await client.query(
-      q.Exists(q.Match(q.Index('users_by_username'), username))
+      q.Get(q.Match(q.Index('users_by_username'), username))
     );
-    
+
     // Compare the provided password with the hashed password stored in the database
     const passwordMatch = await bcrypt.compare(password, user.data.password);
 
@@ -62,7 +61,6 @@ async function loginapi(req, res) {
 
     res.status(200).json({ message: 'Logged in successfully' });
   } catch (error) {
-
     console.log(error);
 
     if (error.message === 'instance not found') {
@@ -70,7 +68,6 @@ async function loginapi(req, res) {
     } else {
       res.status(500).json({ message: 'An error occurred' });
     }
-   
   }
 }
 
