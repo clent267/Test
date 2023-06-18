@@ -61,7 +61,7 @@ async function updateusernameapi(req, res) {
             return;
         }
 
-        const usernameTaken = await client.query(q.Exists(q.Match(q.Index('users_by_username'), newUsername)));
+        const usernameTaken = await client.query(q.Exists(q.Match(q.Index('users_by_username'), q.Casefold(newUsername))));
 
         if (usernameTaken) {
             return res.status(409).json({

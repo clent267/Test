@@ -28,7 +28,7 @@ async function forgotpassapi(req, res) {
 
   try {
     // Check if the email exists in the users collection
-    const user = await client.query(q.Get(q.Match(q.Index('users_by_email'), email)));
+    const user = await client.query(q.Get(q.Match(q.Index('users_by_email'), q.Casefold(email))));
 
     // Generate a reset token
     const resetToken = await bcrypt.hash(user.ref.id + Date.now().toString(), 10);

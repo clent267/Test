@@ -35,7 +35,7 @@ async function registerapi(req, res) {
     
     // Check if username is already taken
     const usernameTaken = await client.query(
-      q.Exists(q.Match(q.Index('users_by_username'), username))
+      q.Exists(q.Match(q.Index('users_by_username'), q.Casefold(username)))
     );
     
     if (usernameTaken) {
@@ -43,7 +43,7 @@ async function registerapi(req, res) {
     }
     
     const emailTaken = await client.query(
-      q.Exists(q.Match(q.Index('users_by_email'), email))
+      q.Exists(q.Match(q.Index('users_by_email'), q.Casefold(email)))
     );
     
     if (emailTaken) {
@@ -82,6 +82,10 @@ async function registerapi(req, res) {
             reason: 'None',
           },
           profile_pic,
+          lowercase_data: {
+            username: q.Casefold(username),
+            email: q.Casefold(email),
+          }
         },
       })
     );

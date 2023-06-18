@@ -23,34 +23,34 @@ async function addgameapi(req, res) {
     }
 
     try {
-      
-      const sessionToken = req.cookies.Account_Session;
 
-      const user_ref_from_session = await client.query(
-          q.Map(
-              q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
-              q.Lambda(x => {
-                  return {
-                      ref: q.Select(['data', 'user'], q.Get(x)),
-                  };
-              })
-          )
-      );
+        const sessionToken = req.cookies.Account_Session;
 
-      const refid = user_ref_from_session.data[0].ref.value.id
+        const user_ref_from_session = await client.query(
+            q.Map(
+                q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
+                q.Lambda(x => {
+                    return {
+                        ref: q.Select(['data', 'user'], q.Get(x)),
+                    };
+                })
+            )
+        );
 
-      const userData = await client.query(
-          q.Map(
-              q.Paginate(q.Ref(q.Collection('users'), refid)),
-              q.Lambda((x) => ({
-                  user_id: q.Select(['ref', 'id'], q.Get(x)),
-                  discord_id: q.Select(['data', 'discord_id'], q.Get(x)),
-              }))
-          )
-      );
+        const refid = user_ref_from_session.data[0].ref.value.id
 
-      const user_id = userData.data[0].user_id;
-      const discord_id = userData.data[0].discord_id;
+        const userData = await client.query(
+            q.Map(
+                q.Paginate(q.Ref(q.Collection('users'), refid)),
+                q.Lambda((x) => ({
+                    user_id: q.Select(['ref', 'id'], q.Get(x)),
+                    discord_id: q.Select(['data', 'discord_id'], q.Get(x)),
+                }))
+            )
+        );
+
+        const user_id = userData.data[0].user_id;
+        const discord_id = userData.data[0].discord_id;
 
         // Check if the game ID is already taken
         const gameExists = await client.query(q.Exists(q.Match(q.Index('users_games_by_game_id'), game_id)));

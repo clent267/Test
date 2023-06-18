@@ -71,12 +71,12 @@ async function createIndexes() {
     {
       name: 'users_by_username',
       collection: 'users',
-      terms: [{ field: ['data', 'username'], casefold: true }],
+      terms: [{ field: ['data', 'lowercase_data','username']}],
     },
     {
       name: 'users_by_email',
       collection: 'users',
-      terms: [{ field: ['data', 'email'] }],
+      terms: [{ field: ['data', 'lowercase_data', 'email'] }],
     },
     {
       name: 'tokens_by_token',

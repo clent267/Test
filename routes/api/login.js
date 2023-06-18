@@ -30,7 +30,7 @@ async function loginapi(req, res) {
   try {
     // Retrieve the user with the given username
     const user = await client.query(
-      q.Get(q.Match(q.Index('users_by_username'), username))
+      q.Get(q.Match(q.Index('users_by_username'), q.Casefold(username)))
     );
 
     // Compare the provided password with the hashed password stored in the database

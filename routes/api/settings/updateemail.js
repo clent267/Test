@@ -60,7 +60,7 @@ async function updateemailapi(req, res) {
             return;
         }
 
-        const emailTaken = await client.query(q.Exists(q.Match(q.Index('users_by_email'), newEmail)));
+        const emailTaken = await client.query(q.Exists(q.Match(q.Index('users_by_email'), q.Casefold(newEmail))));
 
         if (emailTaken) {
             return res.status(409).json({

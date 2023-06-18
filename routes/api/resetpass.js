@@ -30,7 +30,7 @@ async function resetpassapi(req, res) {
     const { email } = tokenDoc.data;
 
     // Find the user associated with the reset token
-    const user = await client.query(q.Get(q.Match(q.Index('users_by_email'), email)));
+    const user = await client.query(q.Get(q.Match(q.Index('users_by_email'), q.Casefold(email))));
 
     // Update the user's password
     const hashedPassword = await bcrypt.hash(password, 10);

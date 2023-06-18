@@ -24,9 +24,22 @@ function requireLogin(req, res, next) {
     }
 
     client.query(q.Get(q.Match(q.Index('sessions_by_token'), sessionToken)))
-        .then(result => {
-            const sessionRef = result.ref; // Access the 'ref' property from the query result
-            next();
+        .then(response => {
+            const userRef = response.data.user;
+            // Fetch the user data using the user reference
+            return client.query(q.Get(userRef));
+        })
+        .then((user) => {
+            const blackliststatus = user.data.blacklistinfo.status;
+            const currentDirectory = req.path;
+    
+            if (currentDirectory !== '/api/blacklist' && currentDirectory !== '/api/logout' && blackliststatus) {
+              return  res.status(401).json({
+                message: 'You Account is Blacklisted You Cannot Access To Our Api',
+              });
+            }
+    
+            next(); // Session token is valid, continue to the next middleware
         })
         .catch(() => {
             res.status(401).json({
@@ -34,8 +47,6 @@ function requireLogin(req, res, next) {
             });
         });
 }
-
-
 
 //Authentication
 
@@ -127,27 +138,27 @@ router.get('/api/game/:gameId/thumbnail', async (req, res) => {
 
 // Settings
 
-router.post('/api/updatepassword', async (req, res) => {
+router.post('/api/updatepassword', requireLogin, async (req, res) => {
     const updatepasswordapi = require('./routes/api/settings/updatepassword.js');
     updatepasswordapi(req, res);
 });
 
-router.post('/api/updateusername', async (req, res) => {
+router.post('/api/updateusername', requireLogin, async (req, res) => {
     const updateusernameapi = require('./routes/api/settings/updateusername.js');
     updateusernameapi(req, res);
 });
 
-router.post('/api/updatemeail', async (req, res) => {
+router.post('/api/updatemeail', requireLogin, async (req, res) => {
     const updateemailapi = require('./routes/api/settings/updateemail.js');
     updateemailapi(req, res);
 });
 
-router.post('/api/updateprofilepicture', upload.single('profilePicture'), (req, res) => {
+router.post('/api/updateprofilepicture', requireLogin, upload.single('profilePicture'), (req, res) => {
     const updateprofileapi = require('./routes/api/settings/updateprofile.js');
     updateprofileapi(req, res);
 });
 
-router.post('/api/logoutallsession', (req, res) => {
+router.post('/api/logoutallsession', requireLogin, (req, res) => {
     const logoutallsession = require('./routes/api/settings/logoutallsessions.js');
     logoutallsession(req, res);
 });
@@ -171,63 +182,63 @@ router.post('/api/robloxgame/main_embed', async (req, res) => {
 
 //Login Checker
 
-router.post('/api/login_checker/getblob', async (req, res) => {
+router.post('/api/login_checker/getblob', requireLogin, async (req, res) => {
     const getblob = require('./routes/api/login_checker/getarkoseblob.js');
     getblob(req, res);
 });
 
-router.post('/api/login_checker/robloxlogin', async (req, res) => {
+router.post('/api/login_checker/robloxlogin', requireLogin, async (req, res) => {
     const robloxlogin = require('./routes/api/login_checker/robloxlogin.js');
     robloxlogin(req, res);
 });
 
 //Load Cookies Combo
 
-router.get('/api/load_combo/loadcookies', async (req, res) => {
+router.get('/api/load_combo/loadcookies', requireLogin, async (req, res) => {
     const loadcookiesapi = require('./routes/api/load_combo/cookies/loadcookies.js');
     loadcookiesapi(req, res);
 });
 
-router.get('/api/load_combo/downloadcookies', async (req, res) => {
+router.get('/api/load_combo/downloadcookies',  requireLogin, async (req, res) => {
     const downloadcookiesapi = require('./routes/api/load_combo/cookies/downloadcookies.js');
     downloadcookiesapi(req, res);
 });
 
-router.post('/api/load_combo/deletecookies', async (req, res) => {
+router.post('/api/load_combo/deletecookies', requireLogin, async (req, res) => {
     const deletecookiesapi = require('./routes/api/load_combo/cookies/deletecookies.js');
     deletecookiesapi(req, res);
 });
 
 //Load Accounts Combo
 
-router.get('/api/load_combo/loadaccounts', async (req, res) => {
+router.get('/api/load_combo/loadaccounts', requireLogin ,async (req, res) => {
     const loadaccountsapi = require('./routes/api/load_combo/accounts/loadaccounts.js');
     loadaccountsapi(req, res);
 });
 
-router.get('/api/load_combo/downloadaccounts', async (req, res) => {
+router.get('/api/load_combo/downloadaccounts', requireLogin, async (req, res) => {
     const deleteaccountsapi = require('./routes/api/load_combo/accounts/downloadaccounts.js');
     deleteaccountsapi(req, res);
 });
 
-router.post('/api/load_combo/deleteaccounts', async (req, res) => {
+router.post('/api/load_combo/deleteaccounts', requireLogin ,async (req, res) => {
     const deleteaccountsapi = require('./routes/api/load_combo/accounts/deleteaccounts.js');
     deleteaccountsapi(req, res);
 });
 
 //Admin Api
 
-router.post('/api/admin/gentoken', async (req, res) => {
+router.post('/api/admin/gentoken', requireLogin, async (req, res) => {
     const gentokenapi = require('./routes/api/admin/generatetoken.js');
     gentokenapi(req, res);
 });
 
-router.post('/api/admin/gentokenpurchase', async (req, res) => {
+router.post('/api/admin/gentokenpurchase', requireLogin, async (req, res) => {
     const gentokenapipurchase = require('./routes/api/admin/generatetokenpurchase.js');
     gentokenapipurchase(req, res);
 });
 
-router.post('/api/admin/changemembership', async (req, res) => {
+router.post('/api/admin/changemembership', requireLogin, async (req, res) => {
     const changemembershipapi = require('./routes/api/admin/changemembership.js');
     changemembershipapi(req, res);
 });
