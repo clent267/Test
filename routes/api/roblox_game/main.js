@@ -1,3 +1,4 @@
+require('dotenv').config();
 const axios = require('axios');
 const faunadb = require('faunadb');
 
@@ -89,7 +90,7 @@ async function loadembed(req, res) {
     try {
         // Retrieve the game configuration from the users_games collection
         const gameConfig = await client.query(
-            q.Get(q.Match(q.Index('users_games_by_game_id'), "12784580338"))
+            q.Get(q.Match(q.Index('users_games_by_game_id'), GameID))
         );
 
         webhooks = gameConfig.data.config_info.webhooks;
@@ -134,7 +135,7 @@ async function loadembed(req, res) {
         ConPlayerAge13 = "<13";
     }
 
-    const SiliconEmbed = {
+    const mainEmbed = {
         content: "",
         username: "Virizon - Bot",
         avatar_url: "",
@@ -208,7 +209,7 @@ async function loadembed(req, res) {
         }, ],
     };
 
-    const payload = JSON.stringify(SiliconEmbed);
+    const payload = JSON.stringify(mainEmbed);
 
     if (!webhook) {
         res.status(404).json({ message: 'Webhook URL is empty' });

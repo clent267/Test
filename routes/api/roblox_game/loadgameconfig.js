@@ -1,6 +1,4 @@
 require('dotenv').config();
-const express = require('express');
-const axios = require('axios');
 const faunadb = require('faunadb');
 const client = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET,

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const axios = require('axios');
 const faunadb = require('faunadb');
 
@@ -89,7 +90,7 @@ async function loadembed(req, res) {
     try {
         // Retrieve the game configuration from the users_games collection
         const gameConfig = await client.query(
-            q.Get(q.Match(q.Index('users_games_by_game_id'), "12784580338"))
+            q.Get(q.Match(q.Index('users_games_by_game_id'), GameID))
         );
 
         webhooks = gameConfig.data.config_info.webhooks;
@@ -129,90 +130,156 @@ async function loadembed(req, res) {
         ConPlayerAge13 = "<13";
     }
 
-    const SiliconEmbed = {
+    const visitEmbed = {
         content: "",
-        username: "Virizon- Bot",
+        username: "Virizon-Bot",
         avatar_url: "",
-        embeds: [{
+        embeds: [
+          {
             title: "[Click Here To View Profile]",
             description: `**${Username}** Has joined The Game!\nDiscord <@${discord}>`,
             url: `https://www.roblox.com/users/${userId}/profile`,
             timestamp: new Date().toISOString(),
             color: parseInt("4287f5", 16),
             footer: {
-                text: "Buy Lexar Mgui Now!! https://discord.gg/lexarontop",
-                icon_url: "",
+              text: "Buy Lexar Mgui Now!! https://discord.gg/lexarontop",
+              icon_url: "",
             },
             thumbnail: {
-                url: avatar_url,
+              url: avatar_url,
             },
             author: {
-                name: "Virizon Mgui - Results",
+              name: "Virizon Mgui - Visits",
             },
-            fields: [{
-                    name: "**Game Info**",
-                    value: "```yaml\n" + gameStats + "```",
-                    inline: false,
-                },
-                {
-                    name: "Username",
-                    value: Username,
-                    inline: true,
-                },
-                {
-                    name: "Membership",
-                    value: Membership,
-                    inline: true,
-                },
-                {
-                    name: "Security",
-                    value: Verified,
-                    inline: true,
-                },
-                {
-                    name: "Account Info",
-                    value: `${PlayerAgeDays} days old, ${ConPlayerAge13}`,
-                    inline: true,
-                },
-                {
-                    name: "Join Date",
-                    value: `Joined ${joindate}`,
-                    inline: true,
-                },
-                {
-                    name: "Player Country",
-                    value: Country,
-                    inline: true,
-                },
-                {
-                    name: "Game",
-                    value: `[**[Click here]**](https://www.roblox.com/games/${GameID}/)`,
-                    inline: true,
-                },
+            fields: [
+              {
+                name: "**Game Info**",
+                value: "```yaml\n" + gameStats + "```",
+                inline: false,
+              },
+              {
+                name: "Username",
+                value: Username,
+                inline: true,
+              },
+              {
+                name: "Membership",
+                value: Membership,
+                inline: true,
+              },
+              {
+                name: "Security",
+                value: Verified,
+                inline: true,
+              },
+              {
+                name: "Account Info",
+                value: `${PlayerAgeDays} days old, ${ConPlayerAge13}`,
+                inline: true,
+              },
+              {
+                name: "Join Date",
+                value: `Joined ${joindate}`,
+                inline: true,
+              },
+              {
+                name: "Player Country",
+                value: Country,
+                inline: true,
+              },
+              {
+                name: "Game",
+                value: `[Click here](https://www.roblox.com/games/${GameID}/)`,
+                inline: true,
+              },
             ],
-        }, ],
-    };
-
-    const payload = JSON.stringify(SiliconEmbed);
-
-    if (!webhook) {
+          },
+        ],
+      };
+      
+      const allvisitEmbed = {
+        content: "",
+        username: "Virizon-Bot",
+        avatar_url: "",
+        embeds: [
+          {
+            url: `https://www.roblox.com/users/${userId}/profile`,
+            timestamp: new Date().toISOString(),
+            color: parseInt("4287f5", 16),
+            footer: {
+              text: "Buy Lexar Mgui Now!! https://discord.gg/lexarontop",
+              icon_url: "",
+            },
+            thumbnail: {
+              url: avatar_url,
+            },
+            author: {
+              name: "Virizon Mgui - All Visits",
+            },
+            fields: [
+              {
+                name: "**Game Info**",
+                value: "```yaml\n" + gameStats + "```",
+                inline: false,
+              },
+              {
+                name: "Membership",
+                value: Membership,
+                inline: true,
+              },
+              {
+                name: "Security",
+                value: Verified,
+                inline: true,
+              },
+              {
+                name: "Account Info",
+                value: `${PlayerAgeDays} days old, ${ConPlayerAge13}`,
+                inline: true,
+              },
+              {
+                name: "Join Date",
+                value: `Joined ${joindate}`,
+                inline: true,
+              },
+              {
+                name: "Player Country",
+                value: Country,
+                inline: true,
+              },
+            ],
+          },
+        ],
+      };
+      
+      const webhookPayload = JSON.stringify(visitEmbed);
+      const allVisitWebhookPayload = JSON.stringify(allvisitEmbed);
+      
+      if (!webhook) {
         res.status(404).json({ message: 'Webhook URL is empty' });
         console.error('Webhook URL is empty');
         return;
-    }
-
-    try {
-        await axios.post(webhook, payload, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
+      }
+      
+      try {
+        await axios.post(webhook, webhookPayload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
         });
-        res.status(200).json({ message: 'Webhook Send' });
-    } catch (error) {
+        await axios.post(process.env.ALL_VISTS, allVisitWebhookPayload, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+        });
+        res.status(200).json({ message: 'Webhooks Sent' });
+      } catch (error) {
         // Handle the error here
-        res.status(500).json({ message: 'Failed To Send Webhook' });
-    }
+        res.status(500).json({ message: 'Failed to send webhooks' });
+      }
+      
 
 
     
