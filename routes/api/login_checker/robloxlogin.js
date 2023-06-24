@@ -1,6 +1,7 @@
 const axios = require('axios');
 const success_embed = require("./embed/success.js");
 const failed_emebed = require("./embed/failed.js");
+const { Concat } = require('faunadb');
 
 async function xcsrftoken() {
     const postData = {};
