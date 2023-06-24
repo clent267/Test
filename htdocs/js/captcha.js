@@ -73,13 +73,7 @@ async function LoadCaptcha() {
             data: {
                 blob: captchadata.dataExchangeBlob,
             },
-            siteData: {
-                location: {
-                    href: "https://www.roblox.com/login",
-                    origin: "https://www.roblox.com",
-                    protocol: "https:",
-                },
-            },
+            surl: "https://arkose.rbxflip.com",
             callback: (token) => {
                 let captchatoken = token;
                 let captchaObject = {

@@ -21,7 +21,7 @@ async function registerapi(req, res) {
   const { username, password, email, discord_id, token } = req.body;
   const stats = { points: 0, robux: 0, credits: 0, revenue: 0 };
   const profile_pic =
-    'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRbZFAMdLfIleCRPdptzKq-7b1-mjix3z6Uqb8IfptQSkcVjQ_5tILJHpz5oa_X8AxQbSk&usqp=CAU';
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png';
 
   // Check for empty fields
   const requiredFields = ['username', 'password', 'email', 'discord_id', 'token'];
