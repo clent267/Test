@@ -145,8 +145,48 @@ function previewProfilePicture(event) {
       previewImage.style.display = 'none';
     }
 }
-  
 
+function handleUpdateProfilePicture(event) {
+    event.preventDefault();
+    const profilePicture = document.getElementById('profilepicture').files[0];
+  
+    const updateprofilepicturebutton = document.getElementById('updateprofilepicturebutton');
+    updateprofilepicturebutton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+    updateprofilepicturebutton.disabled = true;
+  
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('profilePicture', profilePicture);
+  
+    // Perform profile picture update request
+    fetch('/api/updateprofilepicture', {
+      method: 'POST',
+      body: formData
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(response.statusText);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Process the response data if needed
+        // Display a success message
+        const profile_pic = document.getElementById('profile_pic');
+        profile_pic.src = data.imageUrl;
+        swal("Success", "Profile picture updated successfully", "success");
+      })
+      .catch(error => {
+        console.error('Error during profile picture update:', error);
+        swal("Error", error.message || "Profile Picture Update Error. Please try again.", "error");
+      })
+      .finally(() => {
+        // Revert the button state
+        updateprofilepicturebutton.innerHTML = 'Update Profile Picture';
+        updateprofilepicturebutton.disabled = false;
+      });
+}
+  
 function handleUpdateProfilePicture(event) {
     event.preventDefault();
     const profilePicture = document.getElementById('profilepicture').files[0];
