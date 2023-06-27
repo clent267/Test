@@ -74,6 +74,7 @@ async function registerapi(req, res) {
           membership: 'Customer',
           email,
           stats,
+          discord_id: "None",
           blacklistinfo: {
             status: false,
             reason: 'None',

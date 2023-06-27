@@ -274,9 +274,23 @@
       function updateUserInfo(info) {
         const welcometag = document.getElementById('welcometext');
         const profile_pic = document.getElementById('profile_pic');
-        welcometag.innerHTML = `Hi ${info.username} Welcome!`;
-        profile_pic.setAttribute("src", info.profile_pic);
+
+        console.log(info);
+        // Fetch the JSON data from the provided URL
+        fetch(`https://discordlookup.mesavirep.xyz/v1/user/${info.discord_id}`)
+          .then(response => response.json())
+          .then(data => {
+            const globalName = data.global_name;
+
+            // Update the welcome tag and profile picture using the extracted global_name
+            welcometag.innerHTML = `Hi ${globalName}! Welcome! aka ${globalName}`;
+            profile_pic.setAttribute("src", info.profile_pic);
+          })
+          .catch(error => {
+            console.error('Error fetching JSON:', error);
+          });
       }
+
 
       function updateTotalGames(info) {
 
@@ -336,10 +350,13 @@
           const info = {
             username: userData[0].username,
             profile_pic: userData[0].profile_pic,
+            discord_id: userData[0].discord_id,
           };
           updateUserInfo(info);
         }).catch(error => console.log(error));
       }
+
+
       // Call the fetchStatistics function when the page is loaded
       document.addEventListener('DOMContentLoaded', fetchStatistics);
       document.addEventListener('DOMContentLoaded', fetchUserInfo);

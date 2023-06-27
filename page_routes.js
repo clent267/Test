@@ -51,9 +51,11 @@ function requireSession(req, res, next) {
 
         const discordId = user.data.discord_id;
 
-        if (currentDirectory !== '/discord-verification' && (discordId === null || discordId === undefined)){
+        console.log(discordId);
+
+        if (currentDirectory !== '/discord-verification' && discordId === "None"){
           return res.redirect('/discord-verification');
-        }else if (currentDirectory === '/discord-verification' && discordId){
+        }else if (currentDirectory === '/discord-verification' && discordId !== "None"){
           res.redirect('/index');
         }
 

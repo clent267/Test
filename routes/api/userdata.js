@@ -28,6 +28,7 @@ async function usersapi(req, res) {
           stats: q.Select(['data', 'stats'], q.Get(x)),
           username: q.Select(['data', 'username'], q.Get(x)),
           profile_pic: q.Select(['data', 'profile_pic'], q.Get(x)),
+          discord_id: q.Select(['data', 'discord_id'], q.Get(x)),
         }))
       )
     );
@@ -38,6 +39,7 @@ async function usersapi(req, res) {
         stats: user.stats,
         username: user.username,
         profile_pic: user.profile_pic,
+        discord_id: user.discord_id,
       })),
     });
   } catch (error) {
