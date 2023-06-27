@@ -195,6 +195,8 @@ router.get('/settings', requireSession, (req, res) => {
 router.get('/configure', requireSession, async (req, res) => {
   const game_id = req.query.gameId;
 
+  const sessionToken = req.cookies.Account_Session;
+  
   const userRefFromSession = await client.query(
     q.Map(
       q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
