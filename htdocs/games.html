@@ -25,9 +25,8 @@
 			<!-- LOGO -->
 			<div class="topbar-left">
 				<a href="index" class="logo"> <span class="logo-light">
-							<i></i>Virizon Mgui </span> <span class="logo-sm">
-							<i>V</i>
-						</span> </a>
+				<i></i>Virizon Mgui </span> <span class="logo-sm">
+				<i>V</i></span> </a>
 			</div>
 			<nav class="navbar-custom">
 				<ul class="navbar-right list-inline float-right mb-0">
@@ -105,7 +104,20 @@
 						<!-- end row -->
 					</div>
 					<!-- START ROW -->
-					<div id="gamerows" class="row"></div>
+					<div class="row">
+						<div class="col-md-8">
+							<div class="input-group mb-3">
+							  <input type="text" id="searchInput" class="form-control" placeholder="Search game">
+							  <div class="input-group-append">
+								<button id="searchButton" class="btn btn-primary" type="button">Search</button>
+							  </div>
+							</div>
+						</div>
+					</div>
+					
+					<div id="gamerows" class="row">
+						
+					</div>
 					<!-- END ROW -->
 				</div>
 				<!-- container-fluid -->

@@ -103,3 +103,40 @@ function fetchTotalsGames() {
 }
 // Call the fetchStatistics function when the page is loaded
 document.addEventListener('DOMContentLoaded', fetchTotalsGames);
+
+// Get the search input field and button
+const searchInput = document.getElementById("searchInput");
+const searchButton = document.getElementById("searchButton");
+const gameContainer = document.getElementById("gamerows");
+
+// Add event listener for button click
+searchButton.addEventListener("click", performSearch);
+
+// Add event listener for Enter key press
+searchInput.addEventListener("keyup", function (event) {
+  if (event.key === "Enter") {
+    performSearch();
+  }
+});
+
+// Function to perform the search
+function performSearch() {
+  // Get the search query
+  const query = searchInput.value.trim().toLowerCase();
+
+  // Iterate through game cards and show/hide based on search query
+  const gameCards = gameContainer.getElementsByClassName("card");
+  for (let i = 0; i < gameCards.length; i++) {
+    const gameNameElement = gameCards[i].querySelector(".header-title");
+    const gameName = gameNameElement.textContent.toLowerCase();
+    
+    if (gameName.includes(query)) {
+      gameCards[i].style.display = "block";
+    } else {
+      gameCards[i].style.display = "none";
+    }
+  }
+
+  // Clear the search input
+  searchInput.value = "";
+}
