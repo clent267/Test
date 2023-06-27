@@ -84,6 +84,11 @@ async function createIndexes() {
       terms: [{ field: ['data', 'token'] }],
     },
     {
+      name: 'tokens_by_rbx_user_id',
+      collection: 'tokens',
+      terms: [{ field: ['data', 'rbx_user_id'] }],
+    },
+    {
       name: 'sessions_by_token',
       collection: 'sessions',
       terms: [{ field: ['data', 'session_token'] }],

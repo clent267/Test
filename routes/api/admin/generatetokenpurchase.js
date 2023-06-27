@@ -28,7 +28,7 @@ const transporter = nodemailer.createTransport({
     tls: {
       ciphers:'SSLv3'
     }
-  });
+});
 
 async function gentokenapipurchase(req, res) {
     const {

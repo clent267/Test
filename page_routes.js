@@ -61,11 +61,9 @@ function requireSession(req, res, next) {
 
 router.get('/admin', requireSession, async (req, res) => {
   try {
-
-    
     const sessionToken = req.cookies.Account_Session;
 
-    const user_ref_from_session = await client.query(
+    const userRefFromSession = await client.query(
       q.Map(
         q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
         q.Lambda((x) => {
@@ -76,7 +74,7 @@ router.get('/admin', requireSession, async (req, res) => {
       )
     );
 
-    const refid = user_ref_from_session.data[0].ref.value.id;
+    const refid = userRefFromSession.data[0].ref.value.id;
 
     const userData = await client.query(
       q.Map(
@@ -88,27 +86,26 @@ router.get('/admin', requireSession, async (req, res) => {
       )
     );
 
-    const membership  = userData.data[0].membership;
+    const membership = userData.data[0].membership;
 
-    if(membership == "Admin" || membership == "Owner"){
+    if (membership === "Admin" || membership === "Owner") {
       res.sendFile(path.join(__dirname, 'htdocs', 'admin.html'));
-    }else{
-      res.status(403).sendFile(path.join(__dirname, 'htdocs', '403.html'));;
+    } else {
+      res.status(403).sendFile(path.join(__dirname, 'htdocs', '403.html'));
     }
-    
+
   } catch (error) {
     console.error(error);
     res.status(500).send('Internal Server Error');
   }
 });
 
-//Root Page
-
+// Root Page
 router.get('/', requireSession, (req, res) => {
   res.redirect('/index');
 });
 
-//Web Page
+// Web Page
 router.use(express.static('htdocs'));
 
 router.get('/index', requireSession, (req, res) => {
@@ -125,6 +122,10 @@ router.get('/forgot', requireNoSession, (req, res) => {
 
 router.get('/register', requireNoSession, (req, res) => {
   res.sendFile(path.join(__dirname, 'htdocs', 'register.html'));
+});
+
+router.get('/purchase', requireNoSession, (req, res) => {
+  res.sendFile(path.join(__dirname, 'htdocs', 'purchase.html'));
 });
 
 router.get('/reset-password', requireNoSession, async (req, res) => {
@@ -167,7 +168,7 @@ router.get('/settings', requireSession, (req, res) => {
 router.get('/configure', requireSession, async (req, res) => {
   const game_id = req.query.gameId;
 
-  const user_ref_from_session = await client.query(
+  const userRefFromSession = await client.query(
     q.Map(
       q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
       q.Lambda((x) => {
@@ -178,7 +179,7 @@ router.get('/configure', requireSession, async (req, res) => {
     )
   );
 
-  const refid = user_ref_from_session.data[0].ref.value.id;
+  const refid = userRefFromSession.data[0].ref.value.id;
 
   const userData = await client.query(
     q.Map(
@@ -231,7 +232,7 @@ router.get('/blacklist', requireSession, async (req, res) => {
   try {
     const sessionToken = req.cookies.Account_Session;
     
-    const user_ref_from_session = await client.query(
+    const userRefFromSession = await client.query(
       q.Map(
         q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
         q.Lambda((x) => {
@@ -242,7 +243,7 @@ router.get('/blacklist', requireSession, async (req, res) => {
       )
     );
 
-    const refid = user_ref_from_session.data[0].ref.value.id;
+    const refid = userRefFromSession.data[0].ref.value.id;
 
     const userData = await client.query(
       q.Map(

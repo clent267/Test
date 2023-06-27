@@ -75,6 +75,13 @@ router.post('/api/reset-password', async (req, res) => {
     resetpass(req, res);
 });
 
+//Purchase
+
+router.post('/api/purchase', async (req, res) => {
+    const purchaseapi = require('./routes/api/purchase.js');
+    purchaseapi(req, res);
+});
+
 //Users
 
 router.get('/api/user', requireLogin, async (req, res) => {
