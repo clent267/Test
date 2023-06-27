@@ -20,7 +20,7 @@ function handlePurchase(event) {
         })
     }).then(response => {
         if (response.ok) {
-            swal("Success", error.message || "Purchase successful. Please check your email.", "success");
+            swal("Success", "Purchase successful. Please check your email.", "success");
         } else {
             return response.json().then(data => {
                 throw new Error(data.message);

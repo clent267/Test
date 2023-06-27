@@ -65,6 +65,7 @@ router.get('/api/logout', requireLogin, async (req, res) => {
     logoutapi(req, res);
 });
 
+//Reset Password
 router.post('/api/forgotpass', async (req, res) => {
     const forgotpassapi = require('./routes/api/forgotpass.js');
     forgotpassapi(req, res);
@@ -75,6 +76,13 @@ router.post('/api/reset-password', async (req, res) => {
     resetpass(req, res);
 });
 
+//Discord OAuth2 Login
+router.get('/api/discord-auth-logincallback', async (req, res) => {
+    const discordloginapi = require('./routes/api/discord/discordlogin.js');
+    discordloginapi(req, res);
+});
+
+
 //Purchase
 
 router.post('/api/purchase', async (req, res) => {
@@ -83,6 +91,13 @@ router.post('/api/purchase', async (req, res) => {
 });
 
 //Users
+
+//Discord OAuth2 Verifed
+
+router.get('/api/discord-auth-verifiedcallback', requireLogin, async (req, res) => {
+    const discordverifiedapi = require('./routes/api/discord/discordverified.js');
+    discordverifiedapi(req, res);
+});
 
 router.get('/api/user', requireLogin, async (req, res) => {
     const usersapi = require('./routes/api/userdata.js');

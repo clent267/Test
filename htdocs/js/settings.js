@@ -127,6 +127,25 @@ function handleChangeEmail(event) {
         });
 }
 
+function previewProfilePicture(event) {
+    const fileInput = event.target;
+    const previewImage = document.getElementById('profilepicturepreview');
+  
+    if (fileInput.files && fileInput.files[0]) {
+      const reader = new FileReader();
+  
+      reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+      };
+  
+      reader.readAsDataURL(fileInput.files[0]);
+    } else {
+      previewImage.src = '#';
+      previewImage.style.display = 'none';
+    }
+}
+  
 
 function handleUpdateProfilePicture(event) {
     event.preventDefault();

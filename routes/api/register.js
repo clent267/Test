@@ -18,13 +18,11 @@ function generateToken(length) {
 }
 
 async function registerapi(req, res) {
-  const { username, password, email, discord_id, token } = req.body;
+  const { username, password, email, token } = req.body;
   const stats = { points: 0, robux: 0, credits: 0, revenue: 0 };
-  const profile_pic =
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png';
-
+  const profile_pic = 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png';
   // Check for empty fields
-  const requiredFields = ['username', 'password', 'email', 'discord_id', 'token'];
+  const requiredFields = ['username', 'password', 'email', 'token'];
   const missingFields = requiredFields.filter((field) => !req.body[field]);
 
   if (missingFields.length > 0) {
@@ -75,7 +73,6 @@ async function registerapi(req, res) {
           password: hashedPassword,
           membership: 'Customer',
           email,
-          discord_id,
           stats,
           blacklistinfo: {
             status: false,

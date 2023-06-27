@@ -7,7 +7,6 @@ function handleRegister(event) {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     const email = document.getElementById('email').value;
-    const discord_id = document.getElementById('discord_id').value;
     const token = document.getElementById('token').value;
 
     // Perform registration request
@@ -20,7 +19,6 @@ function handleRegister(event) {
             username,
             password,
             email,
-            discord_id,
             token
         })
     }).then(response => {

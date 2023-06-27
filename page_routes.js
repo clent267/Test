@@ -40,17 +40,28 @@ function requireSession(req, res, next) {
         return client.query(q.Get(userRef));
       })
       .then((user) => {
-        const blackliststatus = user.data.blacklistinfo.status;
+        const blacklistStatus = user.data.blacklistinfo.status;
         const currentDirectory = req.path;
 
-        if (currentDirectory !== '/blacklist' && blackliststatus) {
+        if (currentDirectory !== '/blacklist' && blacklistStatus) {
           return res.redirect('/blacklist');
+        }else if (currentDirectory === '/blacklist' && !blacklistStatus){
+          res.redirect('/index');
+        }
+
+        const discordId = user.data.discord_id;
+
+        if (currentDirectory !== '/discord-verification' && (discordId === null || discordId === undefined)){
+          return res.redirect('/discord-verification');
+        }else if (currentDirectory === '/discord-verification' && discordId){
+          res.redirect('/index');
         }
 
         next(); // Session token is valid, continue to the next middleware
       })
-      .catch(() => {
-        // Session token is invalid, redirect to the login page
+      .catch((error) => {
+        console.error(error);
+        // Session token is invalid or an error occurred, redirect to the login page
         res.redirect('/login');
       });
   } else {
@@ -116,6 +127,11 @@ router.get('/login', requireNoSession, (req, res) => {
   res.sendFile(path.join(__dirname, 'htdocs', 'login.html'));
 });
 
+router.get('/discordlogin', (req, res) => {
+  const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI_LOGIN}&response_type=code&scope=identify`;
+  res.redirect(discordAuthUrl);
+});
+
 router.get('/forgot', requireNoSession, (req, res) => {
   res.sendFile(path.join(__dirname, 'htdocs', 'forgot.html'));
 });
@@ -140,13 +156,24 @@ router.get('/reset-password', requireNoSession, async (req, res) => {
     res.sendFile(path.join(__dirname, 'htdocs', 'reset.html'));
 
   } catch (error) {
-    if (error instanceof faunadb.errors.NotFound) {
+    if (error.message === 'instance not found') {
       return res.status(404).sendFile(path.join(__dirname, 'htdocs', '404.html'));
     }
 
     console.error('Error during password reset token lookup:', error);
     return res.status(500).sendFile(path.join(__dirname, 'htdocs', '500.html'));
   }
+});
+
+//With Session Page
+
+router.get('/discord-verification', requireSession, (req, res) => {
+  res.sendFile(path.join(__dirname, 'htdocs', 'discordverification.html'));
+});
+
+router.get('/verified-discord-account', (req, res) => {
+  const discordAuthUrl = `https://discord.com/api/oauth2/authorize?client_id=${process.env.CLIENT_ID}&redirect_uri=${process.env.REDIRECT_URI_VERIFICATION}&response_type=code&scope=identify`;
+  res.redirect(discordAuthUrl);
 });
 
 router.get('/addgame', requireSession, (req, res) => {
@@ -229,43 +256,7 @@ router.get('/lc', requireSession, (req, res) => {
 //Blacklist Page
 
 router.get('/blacklist', requireSession, async (req, res) => {
-  try {
-    const sessionToken = req.cookies.Account_Session;
-    
-    const userRefFromSession = await client.query(
-      q.Map(
-        q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
-        q.Lambda((x) => {
-          return {
-            ref: q.Select(['data', 'user'], q.Get(x)),
-          };
-        })
-      )
-    );
-
-    const refid = userRefFromSession.data[0].ref.value.id;
-
-    const userData = await client.query(
-      q.Map(
-        q.Paginate(q.Ref(q.Collection('users'), refid)),
-        q.Lambda((x) => ({
-          user_id: q.Select(['ref', 'id'], q.Get(x)),
-          membership: q.Select(['data', 'membership'], q.Get(x))
-        }))
-      )
-    );
-
-    const membership = userData.data[0].membership;
-
-    if(membership !== "Blacklist"){
-      return res.status(404).sendFile(path.join(__dirname, 'htdocs', '404.html'));
-    }
-
-    res.sendFile(path.join(__dirname, 'htdocs', 'blacklist.html'));
-  } catch (error) {
-    console.error('Error retrieving blacklist data:', error);
-    res.status(500).send('An error occurred while retrieving the blacklist data');
-  }
+  res.sendFile(path.join(__dirname, 'htdocs', 'blacklist.html'));
 });
 
 

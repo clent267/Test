@@ -79,6 +79,11 @@ async function createIndexes() {
       terms: [{ field: ['data', 'lowercase_data', 'email'] }],
     },
     {
+      name: 'users_by_discord_id',
+      collection: 'users',
+      terms: [{ field: ['data', 'discord_id']}],
+    },
+    {
       name: 'tokens_by_token',
       collection: 'tokens',
       terms: [{ field: ['data', 'token'] }],
