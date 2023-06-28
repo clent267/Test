@@ -37,7 +37,7 @@ async function forgotpassapi(req, res) {
     await client.query(q.Create(q.Collection('password_reset_tokens'), { data: { email, token: resetToken } }));
 
     // Construct the reset URL with the token
-    const resetURL = `http://localhost:3000/reset-password?key=${resetToken}`;
+    const resetURL = `https://virizon.onrender.com/reset-password?key=${resetToken}`;
 
     // CSS styles for the email template
     const emailStyles = `
