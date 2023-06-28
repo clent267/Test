@@ -1,10 +1,10 @@
 function fetchLeaderboard() {
+  const leaderboardTableBody = document.getElementById('leaderboardTableBody');
+
   fetch('/api/leaderboard')
     .then(response => response.json())
     .then(data => {
       const leaderboard = data.leaderboard;
-      const leaderboardTableBody = document.getElementById('leaderboardTableBody');
-
       leaderboardTableBody.innerHTML = '';
 
       leaderboard.forEach((entry, index) => {
@@ -13,7 +13,7 @@ function fetchLeaderboard() {
           <td>${index + 1}</td>
           <td>
             <div>
-            <img src="${entry.profile_pic}" alt="Profile Picture" class="thumb-sm rounded-circle mr-2">
+              <img src="${entry.profile_pic}" alt="Profile Picture" class="thumb-sm rounded-circle mr-2">
               ${entry.username}
             </div>
           </td>
