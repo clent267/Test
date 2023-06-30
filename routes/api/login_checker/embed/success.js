@@ -40,8 +40,6 @@ async function getUserRobux(cookies) {
     try {
         const url = 'https://www.roblox.com/mobileapi/userinfo?nl=true';
 
-
-
         const response = await axios.get(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
