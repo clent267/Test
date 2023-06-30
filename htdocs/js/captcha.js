@@ -25,9 +25,7 @@ function handleRobloxLogin(username, password, success, failed, captchainfo, pro
             if (data.success) {
                 if (data.message === "Account Already Checked") {
                     swal("Warning", data.message, "info");
-                } else if (data.message === "Unknown Error") {
-                    LoadCaptcha(); // Call LoadCaptcha if specific conditions are met
-                } else {
+                }else{
                     swal("Success", data.message, "success");
                 }
             } else {
