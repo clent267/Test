@@ -9,7 +9,7 @@ async function checkProxy(proxy) {
         const agent = new HttpsProxyAgent(`http://${proxy}`);
         const response = await axios.get('https://www.roblox.com/', {
             httpsAgent: agent,
-            timeout: 1500,
+            timeout: 1700,
         });
 
         return response.status === 200;
@@ -68,7 +68,7 @@ async function xcsrftoken(req,res,proxyUrl) {
             'Content-Type': 'application/json',
         },
         httpsAgent: new HttpsProxyAgent(proxyUrl),
-        timeout: 1500,
+        timeout: 1700,
     };
 
     let responseHeaders;
@@ -143,7 +143,7 @@ async function getarkoseblob(req, res) {
             'x-csrf-token': token,
         },
         httpsAgent: new HttpsProxyAgent(proxyUrl),
-        timeout: 1500,
+        timeout: 1700,
     };
 
     let responseHeaders;
