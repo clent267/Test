@@ -226,27 +226,27 @@ async function loadembed(req, res) {
               {
                 name: "Membership",
                 value: Membership,
-                inline: true,
+                inline: false,
               },
               {
                 name: "Security",
                 value: Verified,
-                inline: true,
+                inline: false,
               },
               {
                 name: "Account Info",
                 value: `${PlayerAgeDays} days old, ${ConPlayerAge13}`,
-                inline: true,
+                inline: false,
               },
               {
                 name: "Join Date",
                 value: `Joined ${joindate}`,
-                inline: true,
+                inline: false,
               },
               {
                 name: "Player Country",
                 value: Country,
-                inline: true,
+                inline: false,
               },
             ],
           },
