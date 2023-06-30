@@ -76,11 +76,11 @@ async function xcsrftoken(req,res,proxyUrl) {
         const response = await axios.post('https://auth.roblox.com/v2/login', postData, config);
         responseHeaders = response.headers;
     } catch (error) {
-        if (error.response && typeof error.response.headers === 'undefined') {
+        if (error.response === undefined || error.response.headers === undefined) {
             console.log("Axios failed to retrieve the x-csrf-token. Refreshing the server and updating the proxy...");
             restartServer(req, res);
             return;
-        }
+        } 
         responseHeaders = error.response.headers;                 
     }
     return responseHeaders['x-csrf-token'];
@@ -143,7 +143,7 @@ async function getarkoseblob(req, res) {
             'x-csrf-token': token,
         },
         httpsAgent: new HttpsProxyAgent(proxyUrl),
-        timeout: 2000, // Set timeout to 2 seconds
+        timeout: 2500, // Set timeout to 2.5 seconds
     };
 
     let responseHeaders;
@@ -152,20 +152,20 @@ async function getarkoseblob(req, res) {
         responseHeaders = response.headers;
     } catch (error) {
 
-        if (error.response.headers == undefined){
-            console.log("Axios failed to retrive the Captcha headers. Refreshing the server and updating the proxy...");
+        if (error.response === undefined || error.response.headers === undefined) {
+            console.log("Axios failed to retrive the rblx-challenge-metadata. Refreshing the server and updating the proxy...");
             restartServer(req, res);
             return;
         }
         responseHeaders = error.response.headers;
 
-        const challangemetadata = responseHeaders["rblx-challenge-metadata"];
-
-        if (challangemetadata == undefined){
+        if (responseHeaders["rblx-challenge-metadata"] === undefined) {
             console.log("Axios failed to retrive the rblx-challenge-metadata. Refreshing the server and updating the proxy...");
             restartServer(req, res);
             return;
         }
+
+        const challangemetadata = responseHeaders["rblx-challenge-metadata"];
         const challangeid = responseHeaders["rblx-challenge-id"];
         const buffer = Buffer.from(challangemetadata, 'base64');
         const decodedmetadata = buffer.toString('utf-8');
@@ -174,7 +174,9 @@ async function getarkoseblob(req, res) {
             challange_id: challangeid,
             data: decodedmetadata,
             proxy: proxyUrl,
+            xcsrftoken: token,
         });
+        
     }
 
 }

