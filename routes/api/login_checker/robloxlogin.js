@@ -43,7 +43,7 @@ async function robloxlogin(req, res) {
             'Rblx-Challenge-Type': 'captcha',
         },
         httpsAgent: new HttpsProxyAgent(ProxyUrl),
-        timeout: 2000, // Set timeout to 2 seconds
+        timeout: 3000, // Set timeout to 2 seconds
     };
 
     let responseHeaders;
