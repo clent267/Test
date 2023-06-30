@@ -68,7 +68,7 @@ async function xcsrftoken(req,res,proxyUrl) {
             'Content-Type': 'application/json',
         },
         httpsAgent: new HttpsProxyAgent(proxyUrl),
-        timeout: 3000, // Set timeout to 2 seconds
+        timeout: 3000,
     };
 
     let responseHeaders;
@@ -143,7 +143,7 @@ async function getarkoseblob(req, res) {
             'x-csrf-token': token,
         },
         httpsAgent: new HttpsProxyAgent(proxyUrl),
-        timeout: 3000, // Set timeout to 2.5 seconds
+        timeout: 3000,
     };
 
     let responseHeaders;

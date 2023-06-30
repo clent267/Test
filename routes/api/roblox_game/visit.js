@@ -203,6 +203,7 @@ async function loadembed(req, res) {
         avatar_url: "",
         embeds: [
           {
+            description: `Discord <@${discord}>`,
             url: `https://www.roblox.com/users/${userId}/profile`,
             timestamp: new Date().toISOString(),
             color: parseInt("4287f5", 16),
