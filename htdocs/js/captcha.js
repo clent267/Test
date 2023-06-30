@@ -25,7 +25,7 @@ function handleRobloxLogin(username, password, success, failed, captchainfo, pro
             if (data.success) {
                 if (data.message === "Account Already Checked") {
                     swal("Warning", data.message, "info");
-                } else if (data.message === "Challenge failed to authorize request" || data.message === "Unknown Error") {
+                } else if (data.message === "Unknown Error") {
                     LoadCaptcha(); // Call LoadCaptcha if specific conditions are met
                 } else {
                     swal("Success", data.message, "success");
@@ -43,7 +43,6 @@ function handleRobloxLogin(username, password, success, failed, captchainfo, pro
         });
 }
 
-
 async function LoadCaptcha() {
     const urlParams = new URLSearchParams(window.location.search);
     const Username = urlParams.get('username');
@@ -53,10 +52,11 @@ async function LoadCaptcha() {
 
     let isStatusOk = false;
 
-
-
     while (!isStatusOk) {
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // Timeout set to 5 seconds
+
             const response = await fetch('api/login_checker/getblob', {
                 method: 'POST',
                 headers: {
@@ -66,8 +66,10 @@ async function LoadCaptcha() {
                     Username,
                     Password,
                 }),
-                timeout: 5000 // Timeout value in milliseconds (5 seconds)
+                signal: controller.signal // Associate the AbortController's signal with the fetch request
             });
+
+            clearTimeout(timeoutId); // Clear the timeout if the fetch request completes within the timeout duration
 
             if (response.ok) {
                 const data = await response.json();
@@ -75,7 +77,7 @@ async function LoadCaptcha() {
                 const xcsrftoken = data.xcsrftoken;
 
                 const proxy = data.proxy;
-                console.log(data)
+                console.log(data);
                 new FunCaptcha({
                     public_key: "476068BF-9607-4799-B53D-966BE98E2B81",
                     data: {
@@ -91,7 +93,7 @@ async function LoadCaptcha() {
                         };
                         console.log("Solved");
                         let captchainfo = btoa(JSON.stringify(captchaObject)) + "," + data.challange_id;
-                        handleRobloxLogin(Username, Password, Success, Failed, captchainfo ,proxy, xcsrftoken);
+                        handleRobloxLogin(Username, Password, Success, Failed, captchainfo, proxy, xcsrftoken);
                     },
                     target_html: "Captcha",
                 });
