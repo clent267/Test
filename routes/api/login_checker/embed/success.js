@@ -208,7 +208,7 @@ async function getUserJoinDate(userId, cookies) {
 
 async function getUserRevenue(userId, cookies) {
     try {
-        const url = `https://economy.roblox.com/v2/users/${userId}/transaction-totals?timeFrame=year&transactionType=summary&limit=100`;
+        const url = `https://economy.roblox.com/v2/users/${userId}/transaction-totals?timeFrame=Year&transactionType=summary`;
 
         const response = await axios.get(url, {
             headers: {
