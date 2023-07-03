@@ -35,6 +35,13 @@ async function updateWorkingProxies() {
         if (isWorking) {
             foundProxy = proxy;
             throw new Error('Working proxy found'); // Throw an error to stop Promise.all
+        }else{
+            // Remove the non-working proxy from the file
+            const proxyIndex = proxies.indexOf(proxy);
+            if (proxyIndex > -1) {
+                proxies.splice(proxyIndex, 1);
+                fs.writeFileSync(path.join(__dirname, '../login_checker/proxy.txt'), proxies.join('\n'), 'utf8');
+            }
         }
     });
 
