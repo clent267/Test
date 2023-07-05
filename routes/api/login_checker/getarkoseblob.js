@@ -2,8 +2,17 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 const HttpsProxyAgent = require('https-proxy-agent');
-const { compareSync } = require('bcrypt');
 const proxies = fs.readFileSync(path.join(__dirname, '../login_checker/proxy.txt'), 'utf8').split('\n');
+const crypto = require('crypto');
+
+const secretKey = 'EnqProxy';
+
+function EncodeProxy(data) {
+  const cipher = crypto.createCipher('aes-256-cbc', secretKey);
+  let encodedData = cipher.update(data, 'utf8', 'hex');
+  encodedData += cipher.final('hex');
+  return encodedData;
+}
 
 async function checkProxy(proxy) {
     try {
@@ -174,7 +183,7 @@ async function getarkoseblob(req, res) {
         res.status(200).json({
             challange_id: challangeid,
             data: decodedmetadata,
-            proxy: proxyUrl,
+            proxy: EncodeProxy(proxyUrl),
             xcsrftoken: token,
         });
         
