@@ -17,7 +17,7 @@ function EncodeProxy(data) {
 async function checkProxy(proxy) {
     try {
         const agent = new HttpsProxyAgent(`http://${proxy}`);
-        const response = await axios.get('https://www.roblox.com/', {
+        const response = await axios.get('https://users.roblox.com/v1/users/1', {
             httpsAgent: agent,
             timeout: 1700,
         });
