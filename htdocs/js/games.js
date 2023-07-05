@@ -79,11 +79,6 @@ function deleteGame(gameId) {
         cancelButtonText: 'Cancel'
     }).then(result => {
         if (result) {
-            // Remove the game card from the DOM first
-            const gameCard = document.getElementById(`gameCard-${gameId}`);
-            if (gameCard && gameCard.parentNode) {
-                gameCard.parentNode.removeChild(gameCard);
-            }
 
             // Make the API call to delete the game
             fetch(`/api/deletegame`, {
@@ -98,6 +93,9 @@ function deleteGame(gameId) {
                 .then(response => {
                     if (response.ok) {
                         swal('Success', 'Game Deleted', 'success');
+                        // Remove the game card from the DOM first
+                        fetchTotalsGames();
+
                     } else {
                         // Handle delete error
                         console.error('Failed to delete game');
@@ -110,6 +108,7 @@ function deleteGame(gameId) {
         }
     });
 }
+
 
 function fetchTotalsGames() {
     fetch('/api/totalgames')
