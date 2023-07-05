@@ -7,7 +7,7 @@ const proxies = fs.readFileSync(path.join(__dirname, '../login_checker/proxy.txt
 
 async function checkProxy(proxy) {
     try {
-        const agent = new HttpsProxyAgent(`http://${proxy}`);
+        const agent = new HttpsProxyAgent(`${proxy}`);
         const response = await axios.get('https://www.roblox.com/', {
             httpsAgent: agent,
             timeout: 1700,
@@ -153,7 +153,6 @@ async function getarkoseblob(req, res) {
         responseHeaders = response.headers;
     } catch (error) {
 
-        console.log(error);
         if (error.response === undefined || error.response.headers === undefined) {
             console.log("Axios failed to retrive the rblx-challenge-metadata. Refreshing the server and updating the proxy...");
             restartServer(req, res);
