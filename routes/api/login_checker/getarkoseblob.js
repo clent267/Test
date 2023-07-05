@@ -10,9 +10,9 @@ async function checkProxy(proxy) {
         const agent = new HttpsProxyAgent(`http://${proxy}`);
         const response = await axios.get('https://www.roblox.com/', {
             httpsAgent: agent,
-            timeout: 2000,
+            timeout: 1700,
         });
-        
+
         return response.status === 200;
     } catch (error) {
         return false;
