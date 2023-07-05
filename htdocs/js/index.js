@@ -16,10 +16,10 @@ function updateCardTitles(stats) {
     fetch(`https://discordlookup.mesavirep.xyz/v1/user/${info.discord_id}`)
       .then(response => response.json())
       .then(data => {
-        const globalName = data.global_name;
+        const discordName = data.global_name;
   
         // Update the welcome tag and profile picture using the extracted global_name
-        welcometag.textContent = `Hi ${globalName}! Welcome! aka ${globalName}`;
+        welcometag.textContent = `Hi ${info.username}! Welcome! aka ${discordName}`;
         profile_pic.src = info.profile_pic;
       })
       .catch(error => {
