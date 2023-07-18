@@ -70,22 +70,36 @@ function requireSession(req, res, next) {
   }
 }
 
+async function getRefId(sessionToken) {
+  const userRefFromSession = await client.query(
+    q.Map(
+      q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
+      q.Lambda((x) => {
+        return {
+          ref: q.Select(['data', 'user'], q.Get(x)),
+        };
+      })
+    )
+  );
+
+  const refid = userRefFromSession.data[0].ref.id;
+  return refid;
+}
+
+
+// Root Page
+router.get('/', requireSession, (req, res) => {
+  res.redirect('/index');
+});
+
+// Web Page
+router.use(express.static('htdocs'));
+
 router.get('/admin', requireSession, async (req, res) => {
   try {
     const sessionToken = req.cookies.Account_Session;
 
-    const userRefFromSession = await client.query(
-      q.Map(
-        q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
-        q.Lambda((x) => {
-          return {
-            ref: q.Select(['data', 'user'], q.Get(x)),
-          };
-        })
-      )
-    );
-
-    const refid = userRefFromSession.data[0].ref.value.id;
+    const refid = await getRefId(sessionToken);
 
     const userData = await client.query(
       q.Map(
@@ -110,14 +124,6 @@ router.get('/admin', requireSession, async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
-// Root Page
-router.get('/', requireSession, (req, res) => {
-  res.redirect('/index');
-});
-
-// Web Page
-router.use(express.static('htdocs'));
 
 router.get('/index', requireSession, (req, res) => {
   res.sendFile(path.join(__dirname, 'htdocs', 'index.html'));
@@ -196,19 +202,7 @@ router.get('/configure', requireSession, async (req, res) => {
   const game_id = req.query.gameId;
 
   const sessionToken = req.cookies.Account_Session;
-  
-  const userRefFromSession = await client.query(
-    q.Map(
-      q.Paginate(q.Match(q.Index('sessions_by_token'), sessionToken)),
-      q.Lambda((x) => {
-        return {
-          ref: q.Select(['data', 'user'], q.Get(x)),
-        };
-      })
-    )
-  );
-
-  const refid = userRefFromSession.data[0].ref.value.id;
+  const refid = await getRefId(sessionToken);
 
   const userData = await client.query(
     q.Map(
@@ -260,6 +254,5 @@ router.get('/lc', requireSession, (req, res) => {
 router.get('/blacklist', requireSession, async (req, res) => {
   res.sendFile(path.join(__dirname, 'htdocs', 'blacklist.html'));
 });
-
 
 module.exports = router;

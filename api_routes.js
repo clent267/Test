@@ -51,34 +51,34 @@ function requireLogin(req, res, next) {
 //Authentication
 
 router.post('/api/register', async (req, res) => {
-    const registerapi = require('./routes/api/register.js');
+    const registerapi = require('./routesModule/api/register.js');
     registerapi(req, res);
 });
 
 router.post('/api/login', async (req, res) => {
-    const loginapi = require('./routes/api/login.js');
+    const loginapi = require('./routesModule/api/login.js');
     loginapi(req, res);
 });
 
 router.get('/api/logout', requireLogin, async (req, res) => {
-    const logoutapi = require('./routes/api/logout.js');
+    const logoutapi = require('./routesModule/api/logout.js');
     logoutapi(req, res);
 });
 
 //Reset Password
 router.post('/api/forgotpass', async (req, res) => {
-    const forgotpassapi = require('./routes/api/forgotpass.js');
+    const forgotpassapi = require('./routesModule/api/forgotpass.js');
     forgotpassapi(req, res);
 });
 
 router.post('/api/reset-password', async (req, res) => {
-    const resetpass = require('./routes/api/resetpass.js');
+    const resetpass = require('./routesModule/api/resetpass.js');
     resetpass(req, res);
 });
 
 //Discord OAuth2 Login
 router.get('/api/discord-auth-logincallback', async (req, res) => {
-    const discordloginapi = require('./routes/api/discord/discordlogin.js');
+    const discordloginapi = require('./routesModule/api/discord/discordlogin.js');
     discordloginapi(req, res);
 });
 
@@ -86,7 +86,7 @@ router.get('/api/discord-auth-logincallback', async (req, res) => {
 //Purchase
 
 router.post('/api/purchase', async (req, res) => {
-    const purchaseapi = require('./routes/api/purchase.js');
+    const purchaseapi = require('./routesModule/api/purchase.js');
     purchaseapi(req, res);
 });
 
@@ -95,17 +95,17 @@ router.post('/api/purchase', async (req, res) => {
 //Discord OAuth2 Verifed
 
 router.get('/api/discord-auth-verifiedcallback', requireLogin, async (req, res) => {
-    const discordverifiedapi = require('./routes/api/discord/discordverified.js');
+    const discordverifiedapi = require('./routesModule/api/discord/discordverified.js');
     discordverifiedapi(req, res);
 });
 
 router.get('/api/user', requireLogin, async (req, res) => {
-    const usersapi = require('./routes/api/userdata.js');
+    const usersapi = require('./routesModule/api/userdata.js');
     usersapi(req, res);
 });
 
 router.get('/api/blacklist', requireLogin, async (req, res) => {
-    const blacklistdataapi = require('./routes/api/blacklistdata.js');
+    const blacklistdataapi = require('./routesModule/api/blacklistdata.js');
     blacklistdataapi(req, res);
 });
 
@@ -113,7 +113,7 @@ router.get('/api/blacklist', requireLogin, async (req, res) => {
 //Leaderboard
 
 router.get('/api/leaderboard', requireLogin, async (req, res) => {
-    const leaderboardapi = require('./routes/api/leaderboard.js');
+    const leaderboardapi = require('./routesModule/api/leaderboard.js');
     leaderboardapi(req, res);
 });
 
@@ -121,147 +121,147 @@ router.get('/api/leaderboard', requireLogin, async (req, res) => {
 //Site Game
 
 router.get('/api/totalgames', requireLogin, async (req, res) => {
-    const loadgamesapi = require('./routes/api/games/loadgames.js');
+    const loadgamesapi = require('./routesModule/api/games/loadgames.js');
     loadgamesapi(req, res);
 });
 
 
 router.get('/api/loadconfigures', requireLogin, async (req, res) => {
-    const loadconfiguresapi = require('./routes/api/games/loadconfigure.js');
+    const loadconfiguresapi = require('./routesModule/api/games/loadconfigure.js');
     loadconfiguresapi(req, res);
 });
 
 router.post('/api/addgame', requireLogin, async (req, res) => {
-    const addgameapi = require('./routes/api/games/addgame.js');
+    const addgameapi = require('./routesModule/api/games/addgame.js');
     addgameapi(req, res);
 });
 
 router.post('/api/deletegame', requireLogin, async (req, res) => {
-    const deletegameapi = require('./routes/api/games/deletegame.js');
+    const deletegameapi = require('./routesModule/api/games/deletegame.js');
     deletegameapi(req, res);
 });
 
 router.post('/api/configure', requireLogin, async (req, res) => {
-    const configureapi = require('./routes/api/games/configure.js');
+    const configureapi = require('./routesModule/api/games/configure.js');
     configureapi(req, res);
 });
 
 // Roblox Api
 
 router.get('/api/game/:gameId', async (req, res) => {
-    const gameinfoapi = require('./routes/robloxapi/gameinfo.js');
+    const gameinfoapi = require('./roroutesModuleutes/robloxapi/gameinfo.js');
     gameinfoapi(req, res);
 });
 
 router.get('/api/game/:gameId/thumbnail', async (req, res) => {
-    const thumbnailapi = require('./routes/robloxapi/thumbnail.js');
+    const thumbnailapi = require('./routesModule/robloxapi/thumbnail.js');
     thumbnailapi(req, res);
 });
 
 // Settings
 
 router.post('/api/updatepassword', requireLogin, async (req, res) => {
-    const updatepasswordapi = require('./routes/api/settings/updatepassword.js');
+    const updatepasswordapi = require('./routesModule/api/settings/updatepassword.js');
     updatepasswordapi(req, res);
 });
 
 router.post('/api/updateusername', requireLogin, async (req, res) => {
-    const updateusernameapi = require('./routes/api/settings/updateusername.js');
+    const updateusernameapi = require('./routesModule/api/settings/updateusername.js');
     updateusernameapi(req, res);
 });
 
 router.post('/api/updatemeail', requireLogin, async (req, res) => {
-    const updateemailapi = require('./routes/api/settings/updateemail.js');
+    const updateemailapi = require('./routesModule/api/settings/updateemail.js');
     updateemailapi(req, res);
 });
 
 router.post('/api/updateprofilepicture', requireLogin, upload.single('profilePicture'), (req, res) => {
-    const updateprofileapi = require('./routes/api/settings/updateprofile.js');
+    const updateprofileapi = require('./routesModule/api/settings/updateprofile.js');
     updateprofileapi(req, res);
 });
 
 router.post('/api/logoutallsession', requireLogin, (req, res) => {
-    const logoutallsession = require('./routes/api/settings/logoutallsessions.js');
+    const logoutallsession = require('./routesModule/api/settings/logoutallsessions.js');
     logoutallsession(req, res);
 });
 
 // Roblox Studio
 
 router.get('/api/robloxgame/load_game_configs', async (req, res) => {
-    const load_game_configsapi = require('./routes/api/roblox_game/loadgameconfig.js');
+    const load_game_configsapi = require('./routesModule/api/roblox_game/loadgameconfig.js');
     load_game_configsapi(req, res);
 });
 
 router.post('/api/robloxgame/visit_embed', async (req, res) => {
-    const visitemebed = require('./routes/api/roblox_game/visit.js');
+    const visitemebed = require('./routesModule/api/roblox_game/visit.js');
     visitemebed(req, res);
 });
 
 router.post('/api/robloxgame/main_embed', async (req, res) => {
-    const mainembed = require('./routes/api/roblox_game/main.js');
+    const mainembed = require('./routesModule/api/roblox_game/main.js');
     mainembed(req, res);
 });
 
 //Login Checker
 
 router.post('/api/login_checker/getblob', requireLogin, async (req, res) => {
-    const getblob = require('./routes/api/login_checker/getarkoseblob.js');
+    const getblob = require('./routesModule/api/login_checker/getarkoseblob.js');
     getblob(req, res);
 });
 
 router.post('/api/login_checker/robloxlogin', requireLogin, async (req, res) => {
-    const robloxlogin = require('./routes/api/login_checker/robloxlogin.js');
+    const robloxlogin = require('./routesModule/api/login_checker/robloxlogin.js');
     robloxlogin(req, res);
 });
 
 //Load Cookies Combo
 
 router.get('/api/load_combo/loadcookies', requireLogin, async (req, res) => {
-    const loadcookiesapi = require('./routes/api/load_combo/cookies/loadcookies.js');
+    const loadcookiesapi = require('./routesModule/api/load_combo/cookies/loadcookies.js');
     loadcookiesapi(req, res);
 });
 
 router.get('/api/load_combo/downloadcookies',  requireLogin, async (req, res) => {
-    const downloadcookiesapi = require('./routes/api/load_combo/cookies/downloadcookies.js');
+    const downloadcookiesapi = require('./routesModule/api/load_combo/cookies/downloadcookies.js');
     downloadcookiesapi(req, res);
 });
 
 router.post('/api/load_combo/deletecookies', requireLogin, async (req, res) => {
-    const deletecookiesapi = require('./routes/api/load_combo/cookies/deletecookies.js');
+    const deletecookiesapi = require('./routesModule/api/load_combo/cookies/deletecookies.js');
     deletecookiesapi(req, res);
 });
 
 //Load Accounts Combo
 
 router.get('/api/load_combo/loadaccounts', requireLogin ,async (req, res) => {
-    const loadaccountsapi = require('./routes/api/load_combo/accounts/loadaccounts.js');
+    const loadaccountsapi = require('./routesModule/api/load_combo/accounts/loadaccounts.js');
     loadaccountsapi(req, res);
 });
 
 router.get('/api/load_combo/downloadaccounts', requireLogin, async (req, res) => {
-    const deleteaccountsapi = require('./routes/api/load_combo/accounts/downloadaccounts.js');
+    const deleteaccountsapi = require('./routesModule/api/load_combo/accounts/downloadaccounts.js');
     deleteaccountsapi(req, res);
 });
 
 router.post('/api/load_combo/deleteaccounts', requireLogin ,async (req, res) => {
-    const deleteaccountsapi = require('./routes/api/load_combo/accounts/deleteaccounts.js');
+    const deleteaccountsapi = require('./routesModule/api/load_combo/accounts/deleteaccounts.js');
     deleteaccountsapi(req, res);
 });
 
 //Admin Api
 
 router.post('/api/admin/gentoken', requireLogin, async (req, res) => {
-    const gentokenapi = require('./routes/api/admin/generatetoken.js');
+    const gentokenapi = require('./routesModule/api/admin/generatetoken.js');
     gentokenapi(req, res);
 });
 
 router.post('/api/admin/gentokenpurchase', requireLogin, async (req, res) => {
-    const gentokenapipurchase = require('./routes/api/admin/generatetokenpurchase.js');
+    const gentokenapipurchase = require('./routesModule/api/admin/generatetokenpurchase.js');
     gentokenapipurchase(req, res);
 });
 
 router.post('/api/admin/changemembership', requireLogin, async (req, res) => {
-    const changemembershipapi = require('./routes/api/admin/changemembership.js');
+    const changemembershipapi = require('./routesModule/api/admin/changemembership.js');
     changemembershipapi(req, res);
 });
 
