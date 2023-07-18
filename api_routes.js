@@ -51,28 +51,28 @@ function requireLogin(req, res, next) {
 //Authentication
 
 router.post('/api/register', async (req, res) => {
-    const registerapi = require('./routesModule/api/register.js');
+    const registerapi = require('./routesModule/api/authentication/register.js');
     registerapi(req, res);
 });
 
 router.post('/api/login', async (req, res) => {
-    const loginapi = require('./routesModule/api/login.js');
+    const loginapi = require('./routesModule/api/authentication/login.js');
     loginapi(req, res);
 });
 
 router.get('/api/logout', requireLogin, async (req, res) => {
-    const logoutapi = require('./routesModule/api/logout.js');
+    const logoutapi = require('./routesModule/api/authentication/logout.js');
     logoutapi(req, res);
 });
 
 //Reset Password
 router.post('/api/forgotpass', async (req, res) => {
-    const forgotpassapi = require('./routesModule/api/forgotpass.js');
+    const forgotpassapi = require('./routesModule/api/authentication/forgotpass.js');
     forgotpassapi(req, res);
 });
 
 router.post('/api/reset-password', async (req, res) => {
-    const resetpass = require('./routesModule/api/resetpass.js');
+    const resetpass = require('./routesModule/api/authentication/resetpass.js');
     resetpass(req, res);
 });
 
@@ -100,12 +100,12 @@ router.get('/api/discord-auth-verifiedcallback', requireLogin, async (req, res) 
 });
 
 router.get('/api/user', requireLogin, async (req, res) => {
-    const usersapi = require('./routesModule/api/userdata.js');
+    const usersapi = require('./routesModule/api/users/userdata.js');
     usersapi(req, res);
 });
 
 router.get('/api/blacklist', requireLogin, async (req, res) => {
-    const blacklistdataapi = require('./routesModule/api/blacklistdata.js');
+    const blacklistdataapi = require('./routesModule/api/users/blacklistdata.js');
     blacklistdataapi(req, res);
 });
 
@@ -149,7 +149,7 @@ router.post('/api/configure', requireLogin, async (req, res) => {
 // Roblox Api
 
 router.get('/api/game/:gameId', async (req, res) => {
-    const gameinfoapi = require('./roroutesModuleutes/robloxapi/gameinfo.js');
+    const gameinfoapi = require('./routesModule/robloxapi/gameinfo.js');
     gameinfoapi(req, res);
 });
 
