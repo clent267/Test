@@ -1,5 +1,6 @@
+//Jitler on Top
+//Create A Collections And Indexes If The Database is empty
 require('dotenv').config();
-const bcrypt = require('bcrypt');
 const faunadb = require('faunadb');
 
 const client = new faunadb.Client({
