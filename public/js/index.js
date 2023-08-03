@@ -7,10 +7,13 @@ function updateCardTitles(stats) {
     robuxCardTitle.textContent = `R$ ${stats.robux}`;
     creditsCardTitle.textContent = `$ ${stats.credits}`;
   }
-  
+
+
   function updateUserInfo(info) {
     const welcometag = document.getElementById('welcometext');
     const profile_pic = document.getElementById('profile_pic');
+
+    profile_pic.setAttribute("src", info.profile_pic);
   
     // Fetch the JSON data from the provided URL
     fetch(`https://discordlookup.mesavirep.xyz/v1/user/${info.discord_id}`)
@@ -20,7 +23,6 @@ function updateCardTitles(stats) {
         
         // Update the welcome tag and profile picture using the extracted global_name
         welcometag.textContent = `Hi ${info.username}! Welcome! aka ${discordName}`;
-        profile_pic.src = info.profile_pic;
       })
       .catch(error => {
         console.error('Error fetching JSON:', error);

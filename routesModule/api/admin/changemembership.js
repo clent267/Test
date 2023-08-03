@@ -6,7 +6,7 @@ const client = new faunadb.Client({
 const q = faunadb.query;
 
 async function updatemembershipapi(req, res) {
-  const { username, membershipType, blacklistReason } = req.body;
+  let { username, membershipType, blacklistReason } = req.body;
 
   // Check for empty fields
   const requiredFields = ['username', 'membershipType', 'blacklistReason'];
@@ -68,8 +68,24 @@ async function updatemembershipapi(req, res) {
           },
         })
       );
+      res.status(200).json({ message: 'User Blacklisted, Membership updated successfully' });
+      return;
     } else if (membershipType === 'UnBlacklist') {
       membershipType = 'Customer';
+      // Update the user's membership
+      await client.query(
+        q.Update(usertoupdate.ref, {
+          data: {
+            membership: membershipType,
+            blacklistinfo: {
+              status: false,
+              reason: "None"
+            },
+          },
+        })
+      );
+      res.status(200).json({ message: 'User Unblacklisted, Membership updated successfully' });
+      return;
     }
 
     // Update the user's membership
@@ -77,6 +93,10 @@ async function updatemembershipapi(req, res) {
       q.Update(usertoupdate.ref, {
         data: {
           membership: membershipType,
+          blacklistinfo: {
+            status: false,
+            reason: "None"
+          }
         },
       })
     );
