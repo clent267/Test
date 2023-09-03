@@ -91,8 +91,7 @@ router.get('/', requireSession, (req, res) => {
     res.redirect('/index');
 });
 
-// Web Page
-router.use(restrictHTMLAccess);
+
 router.use(express.static('public'));
 
 router.get('/admin', requireSession, async (req, res) => {
