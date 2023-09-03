@@ -254,5 +254,4 @@ router.get('/blacklist', requireSession, async (req, res) => {
     res.sendFile(path.join(__dirname, 'view', 'blacklist.html'));
 });
 
-
 module.exports = router;
