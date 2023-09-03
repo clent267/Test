@@ -13,61 +13,61 @@ const q = faunadb.query;
 function requireNoSession(req, res, next) {
     const sessionToken = req.cookies.Account_Session;
 
-    if (sessionToken) {
-        client.query(q.Get(q.Match(q.Index('sessions_by_token'), sessionToken)))
-            .then(() => {
-                // Session token is valid, redirect to another page
-                res.redirect('/index');
-            })
-            .catch(() => {
-                // Session token is invalid, continue to the next middleware
-                next();
-            });
-    } else {
-        // No session token found, continue to the next middleware
-        next();
+    if (!sessionToken) {
+        return next(); // No session token found, continue to the next middleware
     }
+
+    client
+        .query(q.Get(q.Match(q.Index('sessions_by_token'), sessionToken)))
+        .then(() => {
+            // Session token is valid, redirect to another page
+            res.redirect('/index');
+        })
+        .catch((error) => {
+            console.error(error);
+            // Session token is invalid, continue to the next middleware
+            next();
+        });
 }
+
 
 function requireSession(req, res, next) {
     const sessionToken = req.cookies.Account_Session;
 
-    if (sessionToken) {
-        client.query(q.Get(q.Match(q.Index('sessions_by_token'), sessionToken)))
-            .then((response) => {
-                const userRef = response.data.user;
-                // Fetch the user data using the user reference
-                return client.query(q.Get(userRef));
-            })
-            .then((user) => {
-                const blacklistStatus = user.data.blacklistinfo.status;
-                const currentDirectory = req.path;
-
-                if (currentDirectory !== '/blacklist' && blacklistStatus) {
-                    return res.redirect('/blacklist');
-                } else if (currentDirectory === '/blacklist' && !blacklistStatus) {
-                    res.redirect('/index');
-                }
-
-                const discordId = user.data.discord_id;
-
-                if (currentDirectory !== '/discord-verification' && discordId === "None") {
-                    return res.redirect('/discord-verification');
-                } else if (currentDirectory === '/discord-verification' && discordId !== "None") {
-                    res.redirect('/index');
-                }
-
-                next(); // Session token is valid, continue to the next middleware
-            })
-            .catch((error) => {
-                console.error(error);
-                // Session token is invalid or an error occurred, redirect to the login page
-                res.redirect('/login');
-            });
-    } else {
-        // No session token found, redirect to the login page
-        res.redirect('/login');
+    if (!sessionToken) {
+        return res.redirect('/login');
     }
+
+    client
+        .query(q.Get(q.Match(q.Index('sessions_by_token'), sessionToken)))
+        .then((response) => {
+            const userRef = response.data.user;
+            // Fetch the user data using the user reference
+            return client.query(q.Get(userRef));
+        })
+        .then((user) => {
+            const blacklistStatus = user.data.blacklistinfo.status;
+            const currentDirectory = req.path;
+
+            if ((currentDirectory !== '/blacklist' && blacklistStatus) ||
+                (currentDirectory === '/blacklist' && !blacklistStatus)) {
+                return res.redirect('/blacklist');
+            }
+
+            const discordId = user.data.discord_id;
+
+            if ((currentDirectory !== '/discord-verification' && discordId === "None") ||
+                (currentDirectory === '/discord-verification' && discordId !== "None")) {
+                return res.redirect('/discord-verification');
+            }
+
+            next(); // Session token is valid, continue to the next middleware
+        })
+        .catch((error) => {
+            console.error(error);
+            // Session token is invalid or an error occurred, redirect to the login page
+            res.redirect('/login');
+        });
 }
 
 async function getRefId(sessionToken) {
@@ -86,12 +86,26 @@ async function getRefId(sessionToken) {
     return refid;
 }
 
+async function getUserData(refid) {
+    const userData = await client.query(
+        q.Map(
+            q.Paginate(q.Ref(q.Collection('users'), refid)),
+            q.Lambda((x) => ({
+                user_id: q.Select(['ref', 'id'], q.Get(x)),
+                membership: q.Select(['data', 'membership'], q.Get(x))
+            }))
+        )
+    );
+    return userData
+}
+
+
 // Root Page
 router.get('/', requireSession, (req, res) => {
     res.redirect('/index');
 });
 
-
+// Web Page
 router.use(express.static('public'));
 
 router.get('/admin', requireSession, async (req, res) => {
@@ -99,23 +113,13 @@ router.get('/admin', requireSession, async (req, res) => {
         const sessionToken = req.cookies.Account_Session;
 
         const refid = await getRefId(sessionToken);
-
-        const userData = await client.query(
-            q.Map(
-                q.Paginate(q.Ref(q.Collection('users'), refid)),
-                q.Lambda((x) => ({
-                    user_id: q.Select(['ref', 'id'], q.Get(x)),
-                    membership: q.Select(['data', 'membership'], q.Get(x))
-                }))
-            )
-        );
-
+        const userData = await getUserData(refid)
         const membership = userData.data[0].membership;
 
         if (membership === "Admin" || membership === "Owner") {
             res.sendFile(path.join(__dirname, 'view', 'admin.html'));
         } else {
-          res.redirect('/403');
+            res.redirect('/403');
         }
 
     } catch (error) {
@@ -158,7 +162,7 @@ router.get('/reset-password', requireNoSession, async (req, res) => {
             q.Get(q.Match(q.Index('password_reset_tokens_by_token'), key))
         );
 
-        res.sendFile(path.join(__dirname, 'public', 'reset.html'));
+        res.sendFile(path.join(__dirname, 'view', 'reset.html'));
 
     } catch (error) {
         if (error.message === 'instance not found') {
@@ -202,16 +206,7 @@ router.get('/configure', requireSession, async (req, res) => {
 
     const sessionToken = req.cookies.Account_Session;
     const refid = await getRefId(sessionToken);
-
-    const userData = await client.query(
-        q.Map(
-            q.Paginate(q.Ref(q.Collection('users'), refid)),
-            q.Lambda((x) => ({
-                user_id: q.Select(['ref', 'id'], q.Get(x)),
-                membership: q.Select(['data', 'membership'], q.Get(x))
-            }))
-        )
-    );
+    const userData = await getUserData(refid)
 
     const user_id = userData.data[0].user_id;
 

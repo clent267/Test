@@ -6,7 +6,7 @@ const client = new faunadb.Client({
 const q = faunadb.query;
 
 async function updatemembershipapi(req, res) {
-  const { username, membershipType, blacklistReason } = req.body;
+  let { username, membershipType, blacklistReason } = req.body;
 
   // Check for empty fields
   const requiredFields = ['username', 'membershipType', 'blacklistReason'];
@@ -77,6 +77,10 @@ async function updatemembershipapi(req, res) {
       q.Update(usertoupdate.ref, {
         data: {
           membership: membershipType,
+          blacklistinfo: {
+            status: false,
+            reason: "",
+          },
         },
       })
     );
